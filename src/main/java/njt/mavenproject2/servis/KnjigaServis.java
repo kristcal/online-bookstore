@@ -114,10 +114,14 @@ public class KnjigaServis {
 
     @Transactional
     public KnjigaDto update(Long id, KnjigaDto dto) throws Exception {
-        System.out.println("[UPDATE] dto.dostupnost.size = " + dto.getDostupnost().size());
-        dto.getDostupnost().forEach(d
-                -> System.out.println(" -> shop=" + d.knjizaraId + ", qty=" + d.kolicina)
-        );
+    	System.out.println("[UPDATE] dto.dostupnost.size = " 
+    	        + (dto.getDostupnost() == null ? 0 : dto.getDostupnost().size()));
+
+    	if (dto.getDostupnost() != null) {
+    	    dto.getDostupnost().forEach(d
+    	            -> System.out.println(" -> shop=" + d.knjizaraId + ", qty=" + d.kolicina)
+    	    );
+    	}
 
         Knjiga existing = repo.findById(id);
 
