@@ -97,7 +97,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "porudzbina")
 public class Porudzbina implements MyEntity{
@@ -106,13 +109,17 @@ public class Porudzbina implements MyEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @Column(nullable = false)
     private LocalDateTime datum;
 
+    @NotNull
+    @Positive
     @Column(nullable = false)
     private Double ukupanIznos;
 
-    // 🔹 NOVO POLJE STATUS
+    @NotBlank
+    @Size(max = 50)
     @Column(nullable = false, length = 50)
     private String status = "KREIRANA";
 

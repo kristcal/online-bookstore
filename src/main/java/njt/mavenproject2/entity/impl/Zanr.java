@@ -10,7 +10,8 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import njt.mavenproject2.entity.MyEntity;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 /**
  *
  * @author Korisnik
@@ -22,6 +23,8 @@ public class Zanr implements MyEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 50)
     private String naziv;
 
     @OneToMany(mappedBy = "zanr", cascade = CascadeType.ALL, orphanRemoval = false)

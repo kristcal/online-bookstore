@@ -5,14 +5,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class KnjigaAutorTest {
 
     private KnjigaAutor knjigaAutor;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         knjigaAutor = new KnjigaAutor();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -118,5 +128,33 @@ class KnjigaAutorTest {
 
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Pisac"));
+    }
+    
+    @Test
+    void testUlogaNotBlank() {
+
+        knjigaAutor.setUloga("");
+
+        Set<ConstraintViolation<KnjigaAutor>> violations =
+                validator.validate(knjigaAutor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("uloga"))
+        );
+    }
+
+    @Test
+    void testUlogaMaxSize() {
+
+        knjigaAutor.setUloga("a".repeat(51));
+
+        Set<ConstraintViolation<KnjigaAutor>> violations =
+                validator.validate(knjigaAutor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("uloga"))
+        );
     }
 }

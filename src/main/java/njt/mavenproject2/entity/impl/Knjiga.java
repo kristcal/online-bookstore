@@ -19,6 +19,10 @@ import java.util.List;
 import njt.mavenproject2.entity.MyEntity;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 /**
  *
@@ -32,11 +36,25 @@ public class Knjiga implements MyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 200)
     private String naziv;
+
+    @Size(max = 1000)
     private String opis;
+
+    @NotNull
+    @Positive
     private Double cena;
+
+    @NotBlank
+    @Size(max = 30)
     private String isbn;
+
+    @NotNull
     private LocalDate godinaIzdanja;
+
+    @Size(max = 500)
     private String imageUrl;
 
     @OneToMany(mappedBy = "knjiga",

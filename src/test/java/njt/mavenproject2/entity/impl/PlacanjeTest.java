@@ -6,14 +6,23 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 class PlacanjeTest {
 
     private Placanje placanje;
-
+    private Validator validator;
+    
     @BeforeEach
     void setUp() {
         placanje = new Placanje();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -146,4 +155,132 @@ class PlacanjeTest {
         assertTrue(s.contains("Kartica"));
         assertTrue(s.contains("PLACENO"));
     }
+    
+    
+    @Test
+    void testIznosNotNull() {
+
+        placanje.setIznos(null);
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("iznos"))
+        );
+    }
+
+    @Test
+    void testIznosPositive() {
+
+        placanje.setIznos(-100.0);
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("iznos"))
+        );
+    }
+
+    @Test
+    void testNacinPlacanjaNotBlank() {
+
+        placanje.setNacinPlacanja("");
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("nacinPlacanja"))
+        );
+    }
+
+    @Test
+    void testNacinPlacanjaMaxSize() {
+
+        placanje.setNacinPlacanja("a".repeat(51));
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("nacinPlacanja"))
+        );
+    }
+
+    @Test
+    void testStatusPlacanjaNotBlank() {
+
+        placanje.setStatusPlacanja("");
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("statusPlacanja"))
+        );
+    }
+
+    @Test
+    void testStatusPlacanjaMaxSize() {
+
+        placanje.setStatusPlacanja("a".repeat(51));
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("statusPlacanja"))
+        );
+    }
+
+    @Test
+    void testDatumPlacanjaNotNull() {
+
+        placanje.setDatumPlacanja(null);
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("datumPlacanja"))
+        );
+    }
+
+    @Test
+    void testPozivNaBrojNotBlank() {
+
+        placanje.setPozivNaBroj("");
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("pozivNaBroj"))
+        );
+    }
+
+    @Test
+    void testPozivNaBrojMaxSize() {
+
+        placanje.setPozivNaBroj("a".repeat(51));
+
+        Set<ConstraintViolation<Placanje>> violations =
+                validator.validate(placanje);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("pozivNaBroj"))
+        );
+    }
+    
 }

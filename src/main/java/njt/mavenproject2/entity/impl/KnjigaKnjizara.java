@@ -6,7 +6,8 @@ package njt.mavenproject2.entity.impl;
 
 import jakarta.persistence.*;
 import njt.mavenproject2.entity.MyEntity;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 /**
  *
  * @author Korisnik
@@ -29,6 +30,8 @@ public class KnjigaKnjizara implements MyEntity {
     @JoinColumn(name = "knjizara_id")
     private Knjizara knjizara;
 
+    @NotNull
+    @PositiveOrZero
     @Column(nullable = false)
     private Integer kolicina =0;
 

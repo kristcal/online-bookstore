@@ -6,7 +6,8 @@ package njt.mavenproject2.entity.impl;
 
 import jakarta.persistence.*;
 import njt.mavenproject2.entity.MyEntity;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 /**
  *
  * @author Korisnik
@@ -20,8 +21,16 @@ public class StavkaPorudzbine implements MyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Positive
     private Integer rb;
+
+    @NotNull
+    @Positive
     private Integer kolicina;
+
+    @NotNull
+    @Positive
     private Double cenaK;
     private Double ukupanIznosStavke;
 

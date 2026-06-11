@@ -8,14 +8,24 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class KnjigaTest {
 
     private Knjiga knjiga;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         knjiga = new Knjiga();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -181,5 +191,132 @@ class KnjigaTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("1984"));
         assertTrue(s.contains("123456789"));
+    }
+    
+    
+    @Test
+    void testNazivNotBlank() {
+
+        knjiga.setNaziv("");
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
+    }
+
+    @Test
+    void testNazivMaxSize() {
+
+        knjiga.setNaziv("a".repeat(201));
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
+    }
+
+    @Test
+    void testOpisMaxSize() {
+
+        knjiga.setOpis("a".repeat(1001));
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("opis"))
+        );
+    }
+
+    @Test
+    void testCenaNotNull() {
+
+        knjiga.setCena(null);
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("cena"))
+        );
+    }
+
+    @Test
+    void testCenaPositive() {
+
+        knjiga.setCena(-100.0);
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("cena"))
+        );
+    }
+
+    @Test
+    void testIsbnNotBlank() {
+
+        knjiga.setIsbn("");
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("isbn"))
+        );
+    }
+
+    @Test
+    void testIsbnMaxSize() {
+
+        knjiga.setIsbn("a".repeat(31));
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("isbn"))
+        );
+    }
+
+    @Test
+    void testGodinaIzdanjaNotNull() {
+
+        knjiga.setGodinaIzdanja(null);
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("godinaIzdanja"))
+        );
+    }
+
+    @Test
+    void testImageUrlMaxSize() {
+
+        knjiga.setImageUrl("a".repeat(501));
+
+        Set<ConstraintViolation<Knjiga>> violations =
+                validator.validate(knjiga);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("imageUrl"))
+        );
     }
 }

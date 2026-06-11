@@ -7,14 +7,25 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
 
 class AutorTest {
 
     private Autor autor;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         autor = new Autor();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -121,5 +132,61 @@ class AutorTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Ivo"));
         assertTrue(s.contains("Andric"));
+    }
+    
+    @Test
+    void testImeNotBlank() {
+
+        autor.setIme("");
+
+        Set<ConstraintViolation<Autor>> violations =
+                validator.validate(autor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ime"))
+        );
+    }
+
+    @Test
+    void testImeMaxSize() {
+
+        autor.setIme("a".repeat(61));
+
+        Set<ConstraintViolation<Autor>> violations =
+                validator.validate(autor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ime"))
+        );
+    }
+
+    @Test
+    void testPrezimeNotBlank() {
+
+        autor.setPrezime("");
+
+        Set<ConstraintViolation<Autor>> violations =
+                validator.validate(autor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("prezime"))
+        );
+    }
+
+    @Test
+    void testPrezimeMaxSize() {
+
+        autor.setPrezime("a".repeat(61));
+
+        Set<ConstraintViolation<Autor>> violations =
+                validator.validate(autor);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("prezime"))
+        );
     }
 }

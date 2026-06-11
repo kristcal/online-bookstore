@@ -3,14 +3,24 @@ package njt.mavenproject2.entity.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class StavkaPorudzbineTest {
 
     private StavkaPorudzbine stavka;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         stavka = new StavkaPorudzbine();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -111,6 +121,27 @@ class StavkaPorudzbineTest {
 
         assertFalse(s1.equals(s2));
     }
+    @Test
+    void testEqualsSameObject() {
+
+        StavkaPorudzbine s = new StavkaPorudzbine();
+
+        assertTrue(s.equals(s));
+    }
+    @Test
+    void testEqualsDifferentClass() {
+
+        StavkaPorudzbine s = new StavkaPorudzbine();
+
+        assertFalse(s.equals("tekst"));
+    }
+    @Test
+    void testEqualsNull() {
+
+        StavkaPorudzbine s = new StavkaPorudzbine();
+
+        assertFalse(s.equals(null));
+    }
 
     @Test
     void testHashCode() {
@@ -135,5 +166,88 @@ class StavkaPorudzbineTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("2"));
         assertTrue(s.contains("1000.0"));
+    }
+    @Test
+    void testRbNotNull() {
+
+        stavka.setRb(null);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("rb"))
+        );
+    }
+
+    @Test
+    void testRbPositive() {
+
+        stavka.setRb(-1);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("rb"))
+        );
+    }
+    
+    @Test
+    void testKolicinaNotNull() {
+
+        stavka.setKolicina(null);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kolicina"))
+        );
+    }
+
+    @Test
+    void testKolicinaPositive() {
+
+        stavka.setKolicina(-1);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kolicina"))
+        );
+    }
+    
+    @Test
+    void testCenaKNotNull() {
+
+        stavka.setCenaK(null);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("cenaK"))
+        );
+    }
+
+    @Test
+    void testCenaKPositive() {
+
+        stavka.setCenaK(-100.0);
+
+        Set<ConstraintViolation<StavkaPorudzbine>> violations =
+                validator.validate(stavka);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("cenaK"))
+        );
     }
 }

@@ -8,7 +8,8 @@ import java.util.List;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import njt.mavenproject2.entity.MyEntity;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 /**
  *
  * @author Korisnik
@@ -21,8 +22,16 @@ public class Knjizara implements MyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 100)
     private String naziv;
+    
+    @NotBlank
+    @Size(max = 100)
     private String lokacija;
+    
+    @NotBlank
+    @Size(max = 50)
     private String kontakt;
 
     @OneToMany(mappedBy = "knjizara", cascade = CascadeType.ALL, orphanRemoval = true)

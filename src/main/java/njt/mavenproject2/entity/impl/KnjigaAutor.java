@@ -6,7 +6,8 @@ package njt.mavenproject2.entity.impl;
 
 import jakarta.persistence.*;
 import njt.mavenproject2.entity.MyEntity;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 /**
  *
  * @author Korisnik
@@ -27,6 +28,8 @@ public class KnjigaAutor implements MyEntity {
     @JoinColumn(name = "autor_id", nullable = false)
     private Autor autor;
 
+    @NotBlank
+    @Size(max = 50)
     private String uloga;
 
     public KnjigaAutor() {

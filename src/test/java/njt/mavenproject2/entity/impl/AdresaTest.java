@@ -7,14 +7,25 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
 class AdresaTest {
 
     private Adresa adresa;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         adresa = new Adresa();
+
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -145,4 +156,125 @@ class AdresaTest {
         assertTrue(s.contains("12A"));
         assertTrue(s.contains("Beograd"));
     }
+    
+    @Test
+    void testUlicaNotBlank() {
+        adresa.setUlica("");
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ulica"))
+        );
+    }
+
+    @Test
+    void testUlicaMaxSize() {
+        adresa.setUlica("a".repeat(101));
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ulica"))
+        );
+    }
+
+    @Test
+    void testBrojNotBlank() {
+        adresa.setBroj("");
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("broj"))
+        );
+    }
+
+    @Test
+    void testBrojMaxSize() {
+        adresa.setBroj("a".repeat(21));
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("broj"))
+        );
+    }
+
+    @Test
+    void testGradNotBlank() {
+        adresa.setGrad("");
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("grad"))
+        );
+    }
+
+    @Test
+    void testGradMaxSize() {
+        adresa.setGrad("a".repeat(61));
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("grad"))
+        );
+    }
+
+    @Test
+    void testPostanskiBrojNotBlank() {
+        adresa.setPostanskiBroj("");
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("postanskiBroj"))
+        );
+    }
+
+    @Test
+    void testPostanskiBrojMaxSize() {
+        adresa.setPostanskiBroj("a".repeat(21));
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("postanskiBroj"))
+        );
+    }
+
+    @Test
+    void testDrzavaNotBlank() {
+        adresa.setDrzava("");
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("drzava"))
+        );
+    }
+
+    @Test
+    void testDrzavaMaxSize() {
+        adresa.setDrzava("a".repeat(61));
+
+        Set<ConstraintViolation<Adresa>> violations = validator.validate(adresa);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("drzava"))
+        );
+    }
+    
 }

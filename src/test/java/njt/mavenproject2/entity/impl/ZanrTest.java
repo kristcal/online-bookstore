@@ -5,14 +5,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.*;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class ZanrTest {
 
     private Zanr zanr;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         zanr = new Zanr();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -99,5 +109,33 @@ class ZanrTest {
 
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Roman"));
+    }
+    
+    @Test
+    void testNazivNotBlank() {
+
+        zanr.setNaziv("");
+
+        Set<ConstraintViolation<Zanr>> violations =
+                validator.validate(zanr);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
+    }
+
+    @Test
+    void testNazivMaxSize() {
+
+        zanr.setNaziv("a".repeat(51));
+
+        Set<ConstraintViolation<Zanr>> violations =
+                validator.validate(zanr);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
     }
 }

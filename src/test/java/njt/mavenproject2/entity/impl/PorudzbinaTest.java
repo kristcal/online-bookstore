@@ -6,14 +6,24 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.*;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class PorudzbinaTest {
 
     private Porudzbina porudzbina;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         porudzbina = new Porudzbina();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -129,5 +139,94 @@ class PorudzbinaTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("5000.0"));
         assertTrue(s.contains("PLACENA"));
+    }
+    
+    @Test
+    void testDatumNotNull() {
+
+        porudzbina.setDatum(null);
+
+        Set<ConstraintViolation<Porudzbina>> violations =
+                validator.validate(porudzbina);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("datum"))
+        );
+    }
+    
+    @Test
+    void testUkupanIznosNotNull() {
+
+        porudzbina.setUkupanIznos(null);
+
+        Set<ConstraintViolation<Porudzbina>> violations =
+                validator.validate(porudzbina);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ukupanIznos"))
+        );
+    }
+
+    @Test
+    void testUkupanIznosPositive() {
+
+        porudzbina.setUkupanIznos(-100.0);
+
+        Set<ConstraintViolation<Porudzbina>> violations =
+                validator.validate(porudzbina);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ukupanIznos"))
+        );
+    }
+    
+    @Test
+    void testStatusNotBlank() {
+
+        porudzbina.setStatus("");
+
+        Set<ConstraintViolation<Porudzbina>> violations =
+                validator.validate(porudzbina);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("status"))
+        );
+    }
+
+    @Test
+    void testStatusMaxSize() {
+
+        porudzbina.setStatus("a".repeat(51));
+
+        Set<ConstraintViolation<Porudzbina>> violations =
+                validator.validate(porudzbina);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("status"))
+        );
+    }
+    
+    @Test
+    void testPorudzbinaLongLocalDateTimeDoubleKorisnik() {
+
+        Korisnik k = new Korisnik();
+        k.setId(1L);
+
+        LocalDateTime datum =
+                LocalDateTime.of(2026, 6, 11, 18, 0);
+
+        Porudzbina p =
+                new Porudzbina(1L, datum, 2500.0, k);
+
+        assertEquals(1L, p.getId());
+        assertEquals(datum, p.getDatum());
+        assertEquals(2500.0, p.getUkupanIznos());
+        assertEquals(k, p.getKorisnik());
+        assertEquals("KREIRANA", p.getStatus());
     }
 }

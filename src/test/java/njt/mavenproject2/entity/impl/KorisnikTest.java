@@ -7,14 +7,24 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class KorisnikTest {
 
     private Korisnik korisnik;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         korisnik = new Korisnik();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -165,4 +175,145 @@ class KorisnikTest {
         assertTrue(s.contains("kristina@gmail.com"));
         assertTrue(s.contains("ADMIN"));
     }
+    
+    @Test
+    void testImeNotBlank() {
+
+        korisnik.setIme("");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ime"))
+        );
+    }
+
+    @Test
+    void testImeMaxSize() {
+
+        korisnik.setIme("a".repeat(61));
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("ime"))
+        );
+    }
+
+    @Test
+    void testPrezimeNotBlank() {
+
+        korisnik.setPrezime("");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("prezime"))
+        );
+    }
+
+    @Test
+    void testPrezimeMaxSize() {
+
+        korisnik.setPrezime("a".repeat(61));
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("prezime"))
+        );
+    }
+
+    @Test
+    void testEmailNotBlank() {
+
+        korisnik.setEmail("");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("email"))
+        );
+    }
+
+    @Test
+    void testEmailFormat() {
+
+        korisnik.setEmail("nijeEmail");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("email"))
+        );
+    }
+
+    @Test
+    void testEmailMaxSize() {
+
+        korisnik.setEmail("a".repeat(121) + "@gmail.com");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("email"))
+        );
+    }
+
+    @Test
+    void testLozinkaMinSize() {
+
+        korisnik.setLozinka("123");
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("lozinka"))
+        );
+    }
+
+    @Test
+    void testLozinkaMaxSize() {
+
+        korisnik.setLozinka("a".repeat(101));
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("lozinka"))
+        );
+    }
+
+    @Test
+    void testUlogaMaxSize() {
+
+        korisnik.setUloga("a".repeat(41));
+
+        Set<ConstraintViolation<Korisnik>> violations =
+                validator.validate(korisnik);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("uloga"))
+        );
+    }
+    
 }

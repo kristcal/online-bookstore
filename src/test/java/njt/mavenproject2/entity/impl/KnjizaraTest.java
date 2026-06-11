@@ -7,14 +7,24 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class KnjizaraTest {
 
     private Knjizara knjizara;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         knjizara = new Knjizara();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -128,5 +138,89 @@ class KnjizaraTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Laguna"));
         assertTrue(s.contains("Beograd"));
+    }
+    
+    @Test
+    void testNazivNotBlank() {
+
+        knjizara.setNaziv("");
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
+    }
+
+    @Test
+    void testNazivMaxSize() {
+
+        knjizara.setNaziv("a".repeat(101));
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("naziv"))
+        );
+    }
+
+    @Test
+    void testLokacijaNotBlank() {
+
+        knjizara.setLokacija("");
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("lokacija"))
+        );
+    }
+
+    @Test
+    void testLokacijaMaxSize() {
+
+        knjizara.setLokacija("a".repeat(101));
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("lokacija"))
+        );
+    }
+
+    @Test
+    void testKontaktNotBlank() {
+
+        knjizara.setKontakt("");
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kontakt"))
+        );
+    }
+
+    @Test
+    void testKontaktMaxSize() {
+
+        knjizara.setKontakt("a".repeat(51));
+
+        Set<ConstraintViolation<Knjizara>> violations =
+                validator.validate(knjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kontakt"))
+        );
     }
 }

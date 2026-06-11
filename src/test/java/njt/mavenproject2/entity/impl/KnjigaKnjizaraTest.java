@@ -5,14 +5,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 class KnjigaKnjizaraTest {
 
     private KnjigaKnjizara knjigaKnjizara;
+    private Validator validator;
 
     @BeforeEach
     void setUp() {
         knjigaKnjizara = new KnjigaKnjizara();
+        ValidatorFactory factory =
+                Validation.buildDefaultValidatorFactory();
+
+        validator = factory.getValidator();
     }
 
     @AfterEach
@@ -121,5 +131,33 @@ class KnjigaKnjizaraTest {
 
         assertTrue(s.contains("1"));
         assertTrue(s.contains("10"));
+    }
+    
+    @Test
+    void testKolicinaNotNull() {
+
+        knjigaKnjizara.setKolicina(null);
+
+        Set<ConstraintViolation<KnjigaKnjizara>> violations =
+                validator.validate(knjigaKnjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kolicina"))
+        );
+    }
+
+    @Test
+    void testKolicinaPositiveOrZero() {
+
+        knjigaKnjizara.setKolicina(-1);
+
+        Set<ConstraintViolation<KnjigaKnjizara>> violations =
+                validator.validate(knjigaKnjizara);
+
+        assertTrue(
+                violations.stream()
+                        .anyMatch(v -> v.getPropertyPath().toString().equals("kolicina"))
+        );
     }
 }
