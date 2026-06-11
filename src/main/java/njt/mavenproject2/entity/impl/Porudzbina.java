@@ -91,6 +91,8 @@ public class Porudzbina implements MyEntity {
 package njt.mavenproject2.entity.impl;
 
 import jakarta.persistence.*;
+import njt.mavenproject2.entity.MyEntity;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -98,7 +100,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "porudzbina")
-public class Porudzbina {
+public class Porudzbina implements MyEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,6 +119,10 @@ public class Porudzbina {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "korisnik_id", nullable = false)
     private Korisnik korisnik;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "placanje_id")
+    private Placanje placanje;
 
     @OneToMany(mappedBy = "porudzbina", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StavkaPorudzbine> stavke = new ArrayList<>();
@@ -180,6 +186,14 @@ public class Porudzbina {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public Placanje getPlacanje() {
+        return placanje;
+    }
+
+    public void setPlacanje(Placanje placanje) {
+        this.placanje = placanje;
     }
 }
 

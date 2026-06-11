@@ -52,6 +52,10 @@ public class Korisnik implements MyEntity {
      */
     @Size(max = 40)
     private String uloga = "USER";
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adresa_id")
+    private Adresa adresa;
 
     /**
      * Ako izbacuješ korisnika u JSON-u, ne želimo rekurziju preko porudžbina.
@@ -126,6 +130,14 @@ public class Korisnik implements MyEntity {
 
     public void setPorudzbine(List<Porudzbina> porudzbine) {
         this.porudzbine = porudzbine;
+    }
+    
+    public Adresa getAdresa() {
+        return adresa;
+    }
+
+    public void setAdresa(Adresa adresa) {
+        this.adresa = adresa;
     }
 
     // --- equals/hashCode samo po ID ---
