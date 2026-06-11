@@ -41,6 +41,10 @@ public class KnjigaAutor implements MyEntity {
     public Long getId() {
         return id;
     }
+    public void setId(Long id) {
+		
+		this.id = id;
+	}
 
     public Knjiga getKnjiga() {
         return knjiga;
@@ -65,4 +69,27 @@ public class KnjigaAutor implements MyEntity {
     public void setUloga(String uloga) {
         this.uloga = uloga;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof KnjigaAutor that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "KnjigaAutor{id=%d, uloga=%s}".formatted(id, uloga);
+    }
+
+	
 }

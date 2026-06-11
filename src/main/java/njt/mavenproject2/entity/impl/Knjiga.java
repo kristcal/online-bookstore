@@ -149,4 +149,25 @@ public class Knjiga implements MyEntity {
     public void setDostupnost(List<KnjigaKnjizara> dostupnost) {
         this.dostupnost = dostupnost;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Knjiga that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Knjiga{id=%d, naziv=%s, isbn=%s}".formatted(id, naziv, isbn);
+    }
 }

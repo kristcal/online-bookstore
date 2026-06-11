@@ -159,6 +159,7 @@ public class Korisnik implements MyEntity {
 
     @Override
     public String toString() {
-        return "Korisnik{id=%d, email=%s}".formatted(id, email);
+        return "Korisnik{id=%d, ime=%s, prezime=%s, email=%s, uloga=%s}"
+                .formatted(id, ime, prezime, email, uloga);
     }
 }

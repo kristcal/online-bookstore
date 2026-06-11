@@ -41,6 +41,25 @@ public class Zanr implements MyEntity{
     public List<Knjiga> getKnjige() { return knjige; }
     public void setKnjige(List<Knjiga> knjige) { this.knjige = knjige; }
     
-    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Zanr that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Zanr{id=%d, naziv=%s}".formatted(id, naziv);
+    }
     
 }

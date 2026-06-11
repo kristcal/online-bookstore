@@ -112,4 +112,25 @@ public class Adresa implements MyEntity {
     public void setKorisnici(List<Korisnik> korisnici) {
         this.korisnici = korisnici;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Adresa that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Adresa{id=%d, ulica=%s, broj=%s, grad=%s}".formatted(id, ulica, broj, grad);
+    }
 }

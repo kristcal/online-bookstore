@@ -107,4 +107,27 @@ public class StavkaPorudzbine implements MyEntity {
     public void setKnjiga(Knjiga knjiga) {
         this.knjiga = knjiga;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof StavkaPorudzbine that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "StavkaPorudzbine{id=%d, rb=%s, kolicina=%s, cenaK=%s}"
+                .formatted(id, rb, kolicina, cenaK);
+    }
+    
 }

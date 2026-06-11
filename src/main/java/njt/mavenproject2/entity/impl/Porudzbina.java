@@ -195,6 +195,28 @@ public class Porudzbina implements MyEntity{
     public void setPlacanje(Placanje placanje) {
         this.placanje = placanje;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Porudzbina that)) {
+            return false;
+        }
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Porudzbina{id=%d, datum=%s, ukupanIznos=%s, status=%s}"
+                .formatted(id, datum, ukupanIznos, status);
+    }
 }
 
 
