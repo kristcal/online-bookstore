@@ -18,6 +18,9 @@ import njt.mavenproject2.repository.impl.PorudzbinaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import njt.mavenproject2.entity.impl.StavkaPorudzbine;
+import njt.mavenproject2.entity.impl.KnjigaKnjizara;
+
 class PorudzbinaServisTest {
 
     private PorudzbinaRepository repo;
@@ -282,5 +285,320 @@ class PorudzbinaServisTest {
 
         verify(repo).findById(999L);
         verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testCreateKorisnikNePostoji() throws Exception {
+
+        PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
+        stavka.setKnjigaId(10L);
+        stavka.setKolicina(1);
+        stavka.setCena(1000.0);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setKorisnikId(1L);
+        dto.setStavke(List.of(stavka));
+
+        when(korisnikRepo.findById(1L)).thenReturn(null);
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.create(dto));
+
+        assertEquals("Korisnik ne postoji", e.getMessage());
+
+        verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testCreateKnjigaNePostoji() throws Exception {
+
+        Korisnik korisnik = new Korisnik();
+        korisnik.setId(1L);
+
+        PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
+        stavka.setKnjigaId(10L);
+        stavka.setKolicina(1);
+        stavka.setCena(1000.0);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setKorisnikId(1L);
+        dto.setStavke(List.of(stavka));
+
+        when(korisnikRepo.findById(1L)).thenReturn(korisnik);
+        when(knjigaRepo.findById(10L)).thenReturn(null);
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.create(dto));
+
+        assertEquals("Knjiga ne postoji: id=10", e.getMessage());
+
+        verify(repo, never()).save(any());
+    }
+    @Test
+    void testUpdateKorisnikNePostoji() throws Exception {
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setKorisnikId(2L);
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(korisnikRepo.findById(2L)).thenReturn(null);
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.update(1L, dto));
+
+        assertEquals("Korisnik ne postoji", e.getMessage());
+
+        verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testUpdateKnjigaNePostoji() throws Exception {
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+
+        PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
+        stavka.setKnjigaId(10L);
+        stavka.setKolicina(1);
+        stavka.setCena(1000.0);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setStavke(List.of(stavka));
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(knjigaRepo.findById(10L)).thenReturn(null);
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.update(1L, dto));
+
+        assertEquals("Knjiga ne postoji: id=10", e.getMessage());
+
+        verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testPromeniStatusSkidaZalihe() throws Exception {
+
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+        knjiga.setNaziv("1984");
+
+        StavkaPorudzbine stavka = new StavkaPorudzbine();
+        stavka.setKnjiga(knjiga);
+        stavka.setKolicina(2);
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+        p.setStavke(List.of(stavka));
+
+        KnjigaKnjizara kk = new KnjigaKnjizara();
+        kk.setKolicina(5);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setStatus("OBRADJENA");
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(kkRepo.findByKnjigaIdForUpdate(10L)).thenReturn(List.of(kk));
+        when(mapper.toDo(p)).thenReturn(dto);
+
+        PorudzbinaDto rezultat = servis.promeniStatus(1L, "OBRADJENA");
+
+        assertNotNull(rezultat);
+        assertEquals("OBRADJENA", p.getStatus());
+        assertEquals(3, kk.getKolicina());
+
+        verify(kkRepo).save(kk);
+        verify(repo).save(p);
+    }
+    
+    @Test
+    void testPromeniStatusNemaDovoljnoNaStanju() throws Exception {
+
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+        knjiga.setNaziv("1984");
+
+        StavkaPorudzbine stavka = new StavkaPorudzbine();
+        stavka.setKnjiga(knjiga);
+        stavka.setKolicina(5);
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+        p.setStavke(List.of(stavka));
+
+        KnjigaKnjizara kk = new KnjigaKnjizara();
+        kk.setKolicina(2);
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(kkRepo.findByKnjigaIdForUpdate(10L)).thenReturn(List.of(kk));
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.promeniStatus(1L, "OBRADJENA"));
+
+        assertEquals("Nema dovoljno na stanju za: 1984", e.getMessage());
+
+        verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testCreateDefaultKolicinaICena() throws Exception {
+        Korisnik korisnik = new Korisnik();
+        korisnik.setId(1L);
+
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+        knjiga.setCena(800.0);
+
+        PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
+        stavka.setKnjigaId(10L);
+        stavka.setKolicina(null);
+        stavka.setCena(null);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setKorisnikId(1L);
+        dto.setStavke(List.of(stavka));
+
+        when(korisnikRepo.findById(1L)).thenReturn(korisnik);
+        when(knjigaRepo.findById(10L)).thenReturn(knjiga);
+        when(mapper.toDo(any(Porudzbina.class))).thenReturn(new PorudzbinaDto());
+
+        servis.create(dto);
+
+        verify(repo).save(argThat(p ->
+                p.getStavke().get(0).getKolicina().equals(1)
+                && p.getStavke().get(0).getCenaK().equals(800.0)
+                && p.getUkupanIznos().equals(800.0)
+        ));
+    }
+    
+    @Test
+    void testUpdateRepoVratiNull() throws Exception {
+        when(repo.findById(1L)).thenReturn(null);
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.update(1L, new PorudzbinaDto()));
+
+        assertEquals("Porudžbina ne postoji", e.getMessage());
+        verify(repo, never()).save(any());
+    }
+    
+    @Test
+    void testUpdateDefaultKolicinaICena() throws Exception {
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+        knjiga.setCena(700.0);
+
+        PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
+        stavka.setKnjigaId(10L);
+        stavka.setKolicina(null);
+        stavka.setCena(null);
+
+        PorudzbinaDto dto = new PorudzbinaDto();
+        dto.setStavke(List.of(stavka));
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(knjigaRepo.findById(10L)).thenReturn(knjiga);
+        when(mapper.toDo(p)).thenReturn(new PorudzbinaDto());
+
+        servis.update(1L, dto);
+
+        assertEquals(1, p.getStavke().get(0).getKolicina());
+        assertEquals(700.0, p.getStavke().get(0).getCenaK());
+        assertEquals(700.0, p.getUkupanIznos());
+    }
+    
+    @Test
+    void testPromeniStatusNaOtkazanaNeSkidaZalihe() throws Exception {
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(mapper.toDo(p)).thenReturn(new PorudzbinaDto());
+
+        servis.promeniStatus(1L, "OTKAZANA");
+
+        assertEquals("OTKAZANA", p.getStatus());
+        verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
+        verify(repo).save(p);
+    }
+    
+    @Test
+    void testPromeniStatusPreskaceStavkuBezKnjige() throws Exception {
+        StavkaPorudzbine stavka = new StavkaPorudzbine();
+        stavka.setKnjiga(null);
+        stavka.setKolicina(2);
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+        p.setStavke(List.of(stavka));
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(mapper.toDo(p)).thenReturn(new PorudzbinaDto());
+
+        servis.promeniStatus(1L, "OBRADJENA");
+
+        verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
+        verify(repo).save(p);
+    }
+    
+    @Test
+    void testPromeniStatusPreskaceStavkuSaNultomKolicinom() throws Exception {
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+
+        StavkaPorudzbine stavka = new StavkaPorudzbine();
+        stavka.setKnjiga(knjiga);
+        stavka.setKolicina(0);
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+        p.setStavke(List.of(stavka));
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(mapper.toDo(p)).thenReturn(new PorudzbinaDto());
+
+        servis.promeniStatus(1L, "OBRADJENA");
+
+        verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
+        verify(repo).save(p);
+    }
+    
+    @Test
+    void testPromeniStatusPreskaceZalihuSaNulaNaStanju() throws Exception {
+        Knjiga knjiga = new Knjiga();
+        knjiga.setId(10L);
+        knjiga.setNaziv("1984");
+
+        StavkaPorudzbine stavka = new StavkaPorudzbine();
+        stavka.setKnjiga(knjiga);
+        stavka.setKolicina(1);
+
+        Porudzbina p = new Porudzbina();
+        p.setId(1L);
+        p.setStatus("KREIRANA");
+        p.setStavke(List.of(stavka));
+
+        KnjigaKnjizara kk = new KnjigaKnjizara();
+        kk.setKolicina(0);
+
+        when(repo.findById(1L)).thenReturn(p);
+        when(kkRepo.findByKnjigaIdForUpdate(10L)).thenReturn(List.of(kk));
+
+        Exception e = assertThrows(Exception.class,
+                () -> servis.promeniStatus(1L, "OBRADJENA"));
+
+        assertEquals("Nema dovoljno na stanju za: 1984", e.getMessage());
+        verify(kkRepo, never()).save(any());
     }
 }

@@ -105,4 +105,52 @@ class AuthServisTest {
 
         verify(repo).findByEmail("test@test.com");
     }
+    
+    
+    @Test
+    void testLoginPogresnaHashovanaLozinka() {
+
+        BCryptPasswordEncoder encoder =
+                new BCryptPasswordEncoder();
+
+        String hash = encoder.encode("ispravnaLozinka");
+
+        Korisnik korisnik = new Korisnik();
+        korisnik.setEmail("test@test.com");
+        korisnik.setLozinka(hash);
+
+        when(repo.findByEmail("test@test.com"))
+                .thenReturn(korisnik);
+
+        Exception e = assertThrows(
+                Exception.class,
+                () -> servis.login(
+                        "test@test.com",
+                        "pogresnaLozinka"));
+
+        assertEquals("Pogrešna lozinka.", e.getMessage());
+
+        verify(repo).findByEmail("test@test.com");
+    }
+    
+    @Test
+    void testLoginLozinkaUNaloguNull() {
+
+        Korisnik korisnik = new Korisnik();
+        korisnik.setEmail("test@test.com");
+        korisnik.setLozinka(null);
+
+        when(repo.findByEmail("test@test.com"))
+                .thenReturn(korisnik);
+
+        Exception e = assertThrows(
+                Exception.class,
+                () -> servis.login(
+                        "test@test.com",
+                        "123456"));
+
+        assertEquals("Pogrešna lozinka.", e.getMessage());
+
+        verify(repo).findByEmail("test@test.com");
+    }
 }

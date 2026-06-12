@@ -18,6 +18,10 @@ import njt.mavenproject2.repository.impl.ZanrRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import njt.mavenproject2.entity.impl.Autor;
+import njt.mavenproject2.entity.impl.Knjizara;
+import njt.mavenproject2.entity.impl.KnjigaKnjizara;
+
 class KnjigaServisTest {
 
     private KnjigaRepository repo;
@@ -264,4 +268,203 @@ class KnjigaServisTest {
         verify(repo).search("1984", 1L, 1000.0);
     }
     
+    
+    @Test
+    void testCreateSaAutorimaIDostupnoscu() throws Exception {
+
+        KnjigaDto dto = new KnjigaDto();
+        dto.setNaziv("1984");
+
+        KnjigaDto.AutorView autorView = new KnjigaDto.AutorView();
+        autorView.id = 1L;
+        autorView.uloga = "Pisac";
+
+        KnjigaDto.DostupnostView dostupnostView = new KnjigaDto.DostupnostView();
+        dostupnostView.knjizaraId = 2L;
+        dostupnostView.kolicina = 5;
+
+        dto.setAutori(List.of(autorView));
+        dto.setDostupnost(List.of(dostupnostView));
+
+        Knjiga entity = new Knjiga();
+        entity.setId(10L);
+        entity.setAutori(new ArrayList<>());
+        entity.setDostupnost(new ArrayList<>());
+
+        Autor autor = new Autor();
+        autor.setId(1L);
+
+        Knjizara knjizara = new Knjizara();
+        knjizara.setId(2L);
+
+        Knjiga saved = new Knjiga();
+        saved.setId(10L);
+
+        KnjigaDto rezultatDto = new KnjigaDto();
+        rezultatDto.setId(10L);
+
+        when(mapper.toEntity(dto)).thenReturn(entity);
+        when(autorRepo.findById(1L)).thenReturn(autor);
+        when(knjizaraRepo.findById(2L)).thenReturn(knjizara);
+        when(repo.findOneFull(10L)).thenReturn(saved);
+        when(mapper.toDo(saved)).thenReturn(rezultatDto);
+
+        KnjigaDto rezultat = servis.create(dto);
+
+        assertNotNull(rezultat);
+        assertEquals(10L, rezultat.getId());
+
+        assertEquals(1, entity.getAutori().size());
+        assertEquals(autor, entity.getAutori().get(0).getAutor());
+        assertEquals("Pisac", entity.getAutori().get(0).getUloga());
+
+        assertEquals(1, entity.getDostupnost().size());
+        assertEquals(knjizara, entity.getDostupnost().get(0).getKnjizara());
+        assertEquals(5, entity.getDostupnost().get(0).getKolicina());
+
+        verify(autorRepo).findById(1L);
+        verify(knjizaraRepo).findById(2L);
+        verify(repo).save(entity);
+    }
+    
+    @Test
+    void testUpdateSaAutorimaIDostupnoscu() throws Exception {
+
+        KnjigaDto dto = new KnjigaDto();
+        dto.setNaziv("Novo ime");
+        dto.setOpis("Novi opis");
+        dto.setCena(1500.0);
+        dto.setIsbn("123");
+
+        KnjigaDto.AutorView autorView = new KnjigaDto.AutorView();
+        autorView.id = 1L;
+        autorView.uloga = "Pisac";
+
+        KnjigaDto.DostupnostView dostupnostView = new KnjigaDto.DostupnostView();
+        dostupnostView.knjizaraId = 2L;
+        dostupnostView.kolicina = 7;
+
+        dto.setAutori(List.of(autorView));
+        dto.setDostupnost(List.of(dostupnostView));
+
+        Knjiga existing = new Knjiga();
+        existing.setId(10L);
+        existing.setAutori(new ArrayList<>());
+        existing.setDostupnost(new ArrayList<>());
+
+        Autor autor = new Autor();
+        autor.setId(1L);
+
+        Knjizara knjizara = new Knjizara();
+        knjizara.setId(2L);
+
+        Knjiga updated = new Knjiga();
+        updated.setId(10L);
+
+        KnjigaDto rezultatDto = new KnjigaDto();
+        rezultatDto.setId(10L);
+
+        when(repo.findById(10L)).thenReturn(existing);
+        when(autorRepo.findById(1L)).thenReturn(autor);
+        when(knjizaraRepo.findById(2L)).thenReturn(knjizara);
+        when(repo.findOneFull(10L)).thenReturn(updated);
+        when(mapper.toDo(updated)).thenReturn(rezultatDto);
+
+        KnjigaDto rezultat = servis.update(10L, dto);
+
+        assertNotNull(rezultat);
+        assertEquals(10L, rezultat.getId());
+
+        assertEquals(1, existing.getAutori().size());
+        assertEquals(autor, existing.getAutori().get(0).getAutor());
+
+        assertEquals(1, existing.getDostupnost().size());
+        assertEquals(knjizara, existing.getDostupnost().get(0).getKnjizara());
+        assertEquals(7, existing.getDostupnost().get(0).getKolicina());
+
+        verify(repo).findById(10L);
+        verify(autorRepo).findById(1L);
+        verify(knjizaraRepo).findById(2L);
+        verify(repo).save(existing);
+    }
+    
+    @Test
+    void testCreatePreskaceAutoreIDostupnostBezId() throws Exception {
+
+        KnjigaDto dto = new KnjigaDto();
+
+        KnjigaDto.AutorView autorView = new KnjigaDto.AutorView();
+        autorView.id = null;
+
+        KnjigaDto.DostupnostView dostupnostView = new KnjigaDto.DostupnostView();
+        dostupnostView.knjizaraId = null;
+
+        dto.setAutori(List.of(autorView));
+        dto.setDostupnost(List.of(dostupnostView));
+
+        Knjiga entity = new Knjiga();
+        entity.setId(1L);
+        entity.setAutori(new ArrayList<>());
+        entity.setDostupnost(new ArrayList<>());
+
+        Knjiga saved = new Knjiga();
+        saved.setId(1L);
+
+        KnjigaDto rezultatDto = new KnjigaDto();
+        rezultatDto.setId(1L);
+
+        when(mapper.toEntity(dto)).thenReturn(entity);
+        when(repo.findOneFull(1L)).thenReturn(saved);
+        when(mapper.toDo(saved)).thenReturn(rezultatDto);
+
+        KnjigaDto rezultat = servis.create(dto);
+
+        assertNotNull(rezultat);
+        assertEquals(0, entity.getAutori().size());
+        assertEquals(0, entity.getDostupnost().size());
+
+        verify(autorRepo, never()).findById(anyLong());
+        verify(knjizaraRepo, never()).findById(anyLong());
+        verify(repo).save(entity);
+    }
+    
+    @Test
+    void testUpdatePreskaceAutoreIDostupnostBezId() throws Exception {
+
+        KnjigaDto dto = new KnjigaDto();
+
+        KnjigaDto.AutorView autorView = new KnjigaDto.AutorView();
+        autorView.id = null;
+
+        KnjigaDto.DostupnostView dostupnostView = new KnjigaDto.DostupnostView();
+        dostupnostView.knjizaraId = null;
+
+        dto.setAutori(List.of(autorView));
+        dto.setDostupnost(List.of(dostupnostView));
+
+        Knjiga existing = new Knjiga();
+        existing.setId(1L);
+        existing.setAutori(new ArrayList<>());
+        existing.setDostupnost(new ArrayList<>());
+
+        Knjiga updated = new Knjiga();
+        updated.setId(1L);
+
+        KnjigaDto rezultatDto = new KnjigaDto();
+        rezultatDto.setId(1L);
+
+        when(repo.findById(1L)).thenReturn(existing);
+        when(repo.findOneFull(1L)).thenReturn(updated);
+        when(mapper.toDo(updated)).thenReturn(rezultatDto);
+
+        KnjigaDto rezultat = servis.update(1L, dto);
+
+        assertNotNull(rezultat);
+        assertEquals(0, existing.getAutori().size());
+        assertEquals(0, existing.getDostupnost().size());
+
+        verify(autorRepo, never()).findById(anyLong());
+        verify(knjizaraRepo, never()).findById(anyLong());
+        verify(repo).save(existing);
+    }
 }
