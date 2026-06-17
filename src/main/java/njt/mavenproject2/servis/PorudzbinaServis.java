@@ -3,28 +3,67 @@ package njt.mavenproject2.servis;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import njt.mavenproject2.dto.impl.PorudzbinaDto;
 import njt.mavenproject2.entity.impl.Knjiga;
 import njt.mavenproject2.entity.impl.Korisnik;
 import njt.mavenproject2.entity.impl.Porudzbina;
 import njt.mavenproject2.entity.impl.StavkaPorudzbine;
 import njt.mavenproject2.mapper.impl.PorudzbinaMapper;
+import njt.mavenproject2.repository.impl.KnjigaKnjizaraRepository;
 import njt.mavenproject2.repository.impl.KnjigaRepository;
 import njt.mavenproject2.repository.impl.KorisnikRepository;
 import njt.mavenproject2.repository.impl.PorudzbinaRepository;
 import org.springframework.stereotype.Service;
-import njt.mavenproject2.repository.impl.KnjigaKnjizaraRepository;
 
+/**
+ * Servis zadužen za rad sa porudžbinama.
+ *
+ * Omogućava pronalaženje, kreiranje, izmenu, brisanje i promenu statusa
+ * porudžbina. Prilikom kreiranja i izmene porudžbine računa se ukupan iznos
+ * na osnovu stavki porudžbine.
+ *
+ * Podaci se razmenjuju preko klase {@link PorudzbinaDto}, dok se mapiranje
+ * između DTO i entitetske klase vrši pomoću klase {@link PorudzbinaMapper}.
+ *
+ * @author Korisnik
+ */
 @Service
 public class PorudzbinaServis {
 
+    /**
+     * Repozitorijum za pristup podacima o porudžbinama.
+     */
     private final PorudzbinaRepository repo;
+
+    /**
+     * Repozitorijum za pristup podacima o korisnicima.
+     */
     private final KorisnikRepository korisnikRepo;
+
+    /**
+     * Repozitorijum za pristup podacima o knjigama.
+     */
     private final KnjigaRepository knjigaRepo;
+
+    /**
+     * Mapper za konverziju između entiteta Porudzbina i DTO objekta.
+     */
     private final PorudzbinaMapper mapper;
+
+    /**
+     * Repozitorijum za pristup podacima o dostupnosti knjiga u knjižarama.
+     */
     private final KnjigaKnjizaraRepository kkRepo;
 
+    /**
+     * Kreira servis za rad sa porudžbinama.
+     *
+     * @param repo repozitorijum porudžbina
+     * @param korisnikRepo repozitorijum korisnika
+     * @param knjigaRepo repozitorijum knjiga
+     * @param mapper mapper za konverziju porudžbina
+     * @param kkRepo repozitorijum dostupnosti knjiga u knjižarama
+     */
     public PorudzbinaServis(
             PorudzbinaRepository repo,
             KorisnikRepository korisnikRepo,
@@ -39,18 +78,38 @@ public class PorudzbinaServis {
         this.kkRepo = kkRepo;
     }
 
+    /**
+     * Vraća listu svih porudžbina.
+     *
+     * @return lista svih porudžbina u obliku DTO objekata
+     */
     public List<PorudzbinaDto> findAll() {
-        return repo.findAll().stream().map(mapper::toDo).collect(Collectors.toList());
+        return repo.findAll()
+                .stream()
+                .map(mapper::toDo)
+                .collect(Collectors.toList());
     }
-    
-    
+
+    /**
+     * Pronalazi porudžbinu prema identifikatoru.
+     *
+     * @param id identifikator porudžbine
+     * @return pronađena porudžbina u obliku DTO objekta
+     * @throws Exception ukoliko porudžbina sa zadatim identifikatorom ne postoji
+     */
     public PorudzbinaDto findById(Long id) throws Exception {
         return mapper.toDo(repo.findById(id));
     }
 
     /**
-     * CREATE: server postavlja datum; stavke dolaze iz DTO-a; ukupan iznos se
-     * računa iz stavki
+     * Kreira novu porudžbinu.
+     *
+     * Datum se postavlja na serverskoj strani, a ukupan iznos se računa
+     * na osnovu stavki porudžbine.
+     *
+     * @param dto DTO objekat sa podacima o porudžbini
+     * @return kreirana porudžbina u obliku DTO objekta
+     * @throws Exception ukoliko korisnik ili neka od knjiga ne postoje
      */
     @Transactional
     public PorudzbinaDto create(PorudzbinaDto dto) throws Exception {
@@ -69,6 +128,7 @@ public class PorudzbinaServis {
         p.setUkupanIznos(0d);
 
         double suma = 0d;
+
         for (var s : dto.getStavke()) {
             Knjiga knj = knjigaRepo.findById(s.getKnjigaId());
             if (knj == null) {
@@ -85,6 +145,7 @@ public class PorudzbinaServis {
 
             suma += ps.getCenaK() * ps.getKolicina();
         }
+
         p.setUkupanIznos(suma);
 
         repo.save(p);
@@ -92,8 +153,16 @@ public class PorudzbinaServis {
     }
 
     /**
-     * UPDATE: ne setuje datum iz DTO-a; možeš promeniti korisnika i/ili
-     * kompletno zameniti stavke
+     * Ažurira postojeću porudžbinu.
+     *
+     * Datum porudžbine se ne preuzima iz DTO objekta, već ostaje kontrolisan
+     * na serverskoj strani. Moguće je promeniti korisnika i kompletno zameniti
+     * stavke porudžbine.
+     *
+     * @param id identifikator porudžbine koja se ažurira
+     * @param dto DTO objekat sa izmenjenim podacima o porudžbini
+     * @return ažurirana porudžbina u obliku DTO objekta
+     * @throws Exception ukoliko porudžbina, korisnik ili knjiga ne postoje
      */
     @Transactional
     public PorudzbinaDto update(Long id, PorudzbinaDto dto) throws Exception {
@@ -102,7 +171,6 @@ public class PorudzbinaServis {
             throw new Exception("Porudžbina ne postoji");
         }
 
-        // Datum je server-controlled -> NE uzimamo iz DTO-a.
         if (dto.getKorisnikId() != null) {
             Korisnik k = korisnikRepo.findById(dto.getKorisnikId());
             if (k == null) {
@@ -113,6 +181,7 @@ public class PorudzbinaServis {
 
         if (dto.getStavke() != null) {
             p.getStavke().clear();
+
             double suma = 0d;
 
             for (var s : dto.getStavke()) {
@@ -128,8 +197,10 @@ public class PorudzbinaServis {
                 ps.setCenaK(s.getCena() != null ? s.getCena() : knj.getCena());
 
                 p.getStavke().add(ps);
+
                 suma += ps.getCenaK() * ps.getKolicina();
             }
+
             p.setUkupanIznos(suma);
         }
 
@@ -137,40 +208,71 @@ public class PorudzbinaServis {
         return mapper.toDo(p);
     }
 
+    /**
+     * Briše porudžbinu prema identifikatoru.
+     *
+     * @param id identifikator porudžbine koja se briše
+     */
     @Transactional
     public void deleteById(Long id) {
         repo.deleteById(id);
     }
 
+    /**
+     * Pronalazi sve porudžbine određenog korisnika.
+     *
+     * @param korisnikId identifikator korisnika
+     * @return lista porudžbina korisnika u obliku DTO objekata
+     */
     public List<PorudzbinaDto> findByKorisnik(Long korisnikId) {
-        return repo.findByKorisnikId(korisnikId).stream()
-                .map(mapper::toDo) // ili toRes ako koristiš bogatiji odgovor sa stavkama
+        return repo.findByKorisnikId(korisnikId)
+                .stream()
+                .map(mapper::toDo)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Menja status porudžbine.
+     *
+     * Ako se status menja u OBRADJENA, sistem skida zalihe za knjige iz
+     * porudžbine. Ako je porudžbina već obrađena, metoda ne ponavlja skidanje
+     * zaliha.
+     *
+     * @param id identifikator porudžbine
+     * @param noviStatus novi status porudžbine
+     * @return porudžbina sa izmenjenim statusom u obliku DTO objekta
+     * @throws Exception ukoliko nema dovoljno zaliha ili porudžbina ne postoji
+     */
     @Transactional
     public PorudzbinaDto promeniStatus(Long id, String noviStatus) throws Exception {
         Porudzbina p = repo.findById(id);
         String stari = p.getStatus();
 
-        // normalizuj ulaz (trim, upper)
         String target = (noviStatus == null ? "" : noviStatus.trim()).toUpperCase();
 
         if (stari != null && stari.equalsIgnoreCase("OBRADJENA") && target.equals("OBRADJENA")) {
-            // već obrađena → ništa ne diramo (idempotentno)
             return mapper.toDo(p);
         }
 
-        // Ako sada postavljamo na OBRADJENA → skini zalihe
         if (target.equals("OBRADJENA")) {
-            skiniZaliheZa(p); // ← ključna linija
+            skiniZaliheZa(p);
         }
 
         p.setStatus(target);
         repo.save(p);
+
         return mapper.toDo(p);
     }
 
+    /**
+     * Skida zalihe za sve stavke iz porudžbine.
+     *
+     * Za svaku stavku proverava dostupnost knjige u knjižarama i smanjuje
+     * količinu na stanju. Ako nema dovoljno primeraka, baca se izuzetak.
+     *
+     * @param p porudžbina za koju se skidaju zalihe
+     * @throws Exception ukoliko nema dovoljno knjiga na stanju
+     */
     @Transactional
     protected void skiniZaliheZa(Porudzbina p) throws Exception {
         if (p.getStavke() == null || p.getStavke().isEmpty()) {
@@ -187,7 +289,6 @@ public class PorudzbinaServis {
                 continue;
             }
 
-            // Zaključa redove (ili red) zalihe za tu knjigu
             var redovi = kkRepo.findByKnjigaIdForUpdate(s.getKnjiga().getId());
             int skinuto = 0;
 
@@ -206,6 +307,7 @@ public class PorudzbinaServis {
                 kkRepo.save(kk);
 
                 skinuto += uzmi;
+
                 if (skinuto >= potrebno) {
                     break;
                 }
@@ -216,7 +318,4 @@ public class PorudzbinaServis {
             }
         }
     }
-    
-    
-
 }

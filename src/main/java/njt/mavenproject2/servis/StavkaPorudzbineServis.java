@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package njt.mavenproject2.servis;
 
 import java.util.List;
@@ -17,14 +13,51 @@ import njt.mavenproject2.repository.impl.StavkaPorudzbineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Servis zadužen za rad sa stavkama porudžbine.
+ *
+ * Omogućava prikaz stavki određene porudžbine, dodavanje nove stavke,
+ * izmenu postojeće stavke i uklanjanje stavke iz porudžbine.
+ * Nakon dodavanja, izmene ili brisanja stavke, ponovo se računa ukupan
+ * iznos porudžbine.
+ *
+ * Podaci se razmenjuju preko klase {@link StavkaPorudzbineDto}, dok se
+ * mapiranje između DTO i entitetske klase vrši pomoću klase
+ * {@link StavkaPorudzbineMapper}.
+ *
+ * @author Korisnik
+ */
 @Service
 public class StavkaPorudzbineServis {
 
+    /**
+     * Repozitorijum za pristup podacima o stavkama porudžbine.
+     */
     private final StavkaPorudzbineRepository repo;
+
+    /**
+     * Repozitorijum za pristup podacima o porudžbinama.
+     */
     private final PorudzbinaRepository porRepo;
+
+    /**
+     * Repozitorijum za pristup podacima o knjigama.
+     */
     private final KnjigaRepository knjigaRepo;
+
+    /**
+     * Mapper za konverziju između entiteta StavkaPorudzbine i DTO objekta.
+     */
     private final StavkaPorudzbineMapper mapper;
 
+    /**
+     * Kreira servis za rad sa stavkama porudžbine.
+     *
+     * @param repo repozitorijum stavki porudžbine
+     * @param porRepo repozitorijum porudžbina
+     * @param knjigaRepo repozitorijum knjiga
+     * @param mapper mapper za konverziju stavki porudžbine
+     */
     public StavkaPorudzbineServis(StavkaPorudzbineRepository repo,
             PorudzbinaRepository porRepo,
             KnjigaRepository knjigaRepo,
@@ -35,10 +68,31 @@ public class StavkaPorudzbineServis {
         this.mapper = mapper;
     }
 
+    /**
+     * Vraća listu stavki za određenu porudžbinu.
+     *
+     * @param porudzbinaId identifikator porudžbine
+     * @return lista stavki porudžbine u obliku DTO objekata
+     */
     public List<StavkaPorudzbineDto> listForPorudzbina(Long porudzbinaId) {
-        return repo.findByPorudzbinaId(porudzbinaId).stream().map(mapper::toDo).collect(Collectors.toList());
+        return repo.findByPorudzbinaId(porudzbinaId)
+                .stream()
+                .map(mapper::toDo)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Dodaje novu stavku u porudžbinu.
+     *
+     * Ako redni broj stavke nije prosleđen, automatski se dodeljuje sledeći
+     * redni broj u okviru porudžbine. Nakon dodavanja stavke ponovo se računa
+     * ukupan iznos porudžbine.
+     *
+     * @param porudzbinaId identifikator porudžbine
+     * @param dto DTO objekat sa podacima o stavki
+     * @return dodata stavka porudžbine u obliku DTO objekta
+     * @throws Exception ukoliko porudžbina ili knjiga ne postoji
+     */
     @Transactional
     public StavkaPorudzbineDto add(Long porudzbinaId, StavkaPorudzbineDto dto) throws Exception {
         Porudzbina p = porRepo.findById(porudzbinaId);
@@ -46,57 +100,85 @@ public class StavkaPorudzbineServis {
 
         StavkaPorudzbine s = mapper.toEntity(dto);
 
-        // dodela rb ako nije poslat
         Integer rb = s.getRb();
         if (rb == null || rb <= 0) {
             rb = repo.findMaxRbForPorudzbina(porudzbinaId) + 1;
         }
-        s.setRb(rb);
 
+        s.setRb(rb);
         s.setPorudzbina(p);
         s.setKnjiga(k);
 
         repo.save(s);
 
-        // RE-IZRAČUNAJ UKUPAN IZNOS PORUDŽBINE
         p.setUkupanIznos(
-                repo.findByPorudzbinaId(porudzbinaId).stream()
-                        .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null) ? x.getCenaK() * x.getKolicina() : 0d)
+                repo.findByPorudzbinaId(porudzbinaId)
+                        .stream()
+                        .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null)
+                        ? x.getCenaK() * x.getKolicina()
+                        : 0d)
                         .sum()
         );
+
         porRepo.save(p);
 
         return mapper.toDo(s);
     }
 
+    /**
+     * Ažurira postojeću stavku porudžbine.
+     *
+     * Moguće je promeniti količinu, cenu knjige i knjigu na koju se stavka
+     * odnosi. Nakon izmene ponovo se računa ukupan iznos porudžbine.
+     *
+     * @param stavkaId identifikator stavke koja se ažurira
+     * @param dto DTO objekat sa izmenjenim podacima o stavki
+     * @return ažurirana stavka porudžbine u obliku DTO objekta
+     * @throws Exception ukoliko stavka ili knjiga ne postoji
+     */
     @Transactional
     public StavkaPorudzbineDto update(Long stavkaId, StavkaPorudzbineDto dto) throws Exception {
         StavkaPorudzbine s = repo.findById(stavkaId);
+
         if (dto.getKolicina() != null) {
             s.setKolicina(dto.getKolicina());
         }
+
         if (dto.getCenaK() != null) {
             s.setCenaK(dto.getCenaK());
         }
+
         if (dto.getKnjigaId() != null) {
             s.setKnjiga(knjigaRepo.findById(dto.getKnjigaId()));
         }
 
         repo.save(s);
 
-        // RE-IZRAČUNAJ UKUPAN IZNOS PORUDŽBINE
         Long porId = s.getPorudzbina().getId();
         Porudzbina p = porRepo.findById(porId);
+
         p.setUkupanIznos(
-                repo.findByPorudzbinaId(porId).stream()
-                        .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null) ? x.getCenaK() * x.getKolicina() : 0d)
+                repo.findByPorudzbinaId(porId)
+                        .stream()
+                        .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null)
+                        ? x.getCenaK() * x.getKolicina()
+                        : 0d)
                         .sum()
         );
+
         porRepo.save(p);
 
         return mapper.toDo(s);
     }
 
+    /**
+     * Uklanja stavku porudžbine.
+     *
+     * Nakon brisanja stavke ponovo se računa ukupan iznos porudžbine.
+     * Ako stavka ne postoji, metoda ne baca grešku.
+     *
+     * @param stavkaId identifikator stavke koja se briše
+     */
     @Transactional
     public void remove(Long stavkaId) {
         try {
@@ -105,16 +187,19 @@ public class StavkaPorudzbineServis {
 
             repo.deleteById(stavkaId);
 
-            // RE-IZRAČUNAJ UKUPAN IZNOS PORUDŽBINE
             Porudzbina p = porRepo.findById(porId);
+
             p.setUkupanIznos(
-                    repo.findByPorudzbinaId(porId).stream()
-                            .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null) ? x.getCenaK() * x.getKolicina() : 0d)
+                    repo.findByPorudzbinaId(porId)
+                            .stream()
+                            .mapToDouble(x -> (x.getCenaK() != null && x.getKolicina() != null)
+                            ? x.getCenaK() * x.getKolicina()
+                            : 0d)
                             .sum()
             );
+
             porRepo.save(p);
         } catch (Exception ignore) {
-            // ako ne postoji stavka, idempotentno – bez bacanja greške
         }
     }
 }
