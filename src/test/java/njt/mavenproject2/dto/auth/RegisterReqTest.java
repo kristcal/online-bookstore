@@ -4,8 +4,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti DTO klase {@link RegisterReq}.
+ *
+ * Testira kreiranje objekta i pristup vrednostima record komponenti.
+ *
+ * @author Korisnik
+ */
 class RegisterReqTest {
 
+	/**
+	 * Proverava kreiranje RegisterReq objekta i pristup njegovim atributima.
+	 */
     @Test
     void testRegisterReq() {
 

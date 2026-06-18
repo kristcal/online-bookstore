@@ -2,20 +2,33 @@ package njt.mavenproject2.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link KnjigaAutor}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class KnjigaAutorTest {
 
     private KnjigaAutor knjigaAutor;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase KnjigaAutor i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         knjigaAutor = new KnjigaAutor();
@@ -25,16 +38,25 @@ class KnjigaAutorTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         knjigaAutor = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase KnjigaAutor.
+     */
     @Test
     void testKnjigaAutor() {
         assertNotNull(knjigaAutor);
     }
 
+    /**
+     * Proverava konstruktor sa knjigom, autorom i ulogom.
+     */
     @Test
     void testKnjigaAutorKnjigaAutorString() {
         Knjiga knjiga = new Knjiga();
@@ -47,6 +69,9 @@ class KnjigaAutorTest {
         assertEquals("Pisac", knjigaAutor.getUloga());
     }
 
+    /**
+     * Proverava postavljanje knjige.
+     */
     @Test
     void testSetKnjiga() {
         Knjiga knjiga = new Knjiga();
@@ -56,6 +81,9 @@ class KnjigaAutorTest {
         assertEquals(knjiga, knjigaAutor.getKnjiga());
     }
 
+    /**
+     * Proverava postavljanje autora.
+     */
     @Test
     void testSetAutor() {
         Autor autor = new Autor();
@@ -65,6 +93,9 @@ class KnjigaAutorTest {
         assertEquals(autor, knjigaAutor.getAutor());
     }
 
+    /**
+     * Proverava postavljanje uloge autora za knjigu.
+     */
     @Test
     void testSetUloga() {
         knjigaAutor.setUloga("Prevodilac");
@@ -72,6 +103,9 @@ class KnjigaAutorTest {
         assertEquals("Prevodilac", knjigaAutor.getUloga());
     }
 
+    /**
+     * Proverava da su dve veze knjiga-autor jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         KnjigaAutor ka1 = new KnjigaAutor();
@@ -83,6 +117,9 @@ class KnjigaAutorTest {
         assertTrue(ka1.equals(ka2));
     }
 
+    /**
+     * Proverava da dve veze knjiga-autor nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         KnjigaAutor ka1 = new KnjigaAutor();
@@ -94,6 +131,9 @@ class KnjigaAutorTest {
         assertFalse(ka1.equals(ka2));
     }
 
+    /**
+     * Proverava da veza knjiga-autor nije jednaka null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         knjigaAutor.setId(1L);
@@ -101,6 +141,9 @@ class KnjigaAutorTest {
         assertFalse(knjigaAutor.equals(null));
     }
 
+    /**
+     * Proverava da veza knjiga-autor nije jednaka objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         knjigaAutor.setId(1L);
@@ -108,6 +151,9 @@ class KnjigaAutorTest {
         assertFalse(knjigaAutor.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za veze knjiga-autor sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         KnjigaAutor ka1 = new KnjigaAutor();
@@ -119,6 +165,9 @@ class KnjigaAutorTest {
         assertEquals(ka1.hashCode(), ka2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz veze knjiga-autor.
+     */
     @Test
     void testToString() {
         knjigaAutor.setId(1L);
@@ -129,7 +178,10 @@ class KnjigaAutorTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Pisac"));
     }
-    
+
+    /**
+     * Proverava validaciju kada je uloga prazna.
+     */
     @Test
     void testUlogaNotBlank() {
 
@@ -144,6 +196,9 @@ class KnjigaAutorTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine uloge.
+     */
     @Test
     void testUlogaMaxSize() {
 

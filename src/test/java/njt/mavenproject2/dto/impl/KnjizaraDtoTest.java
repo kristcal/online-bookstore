@@ -6,8 +6,18 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti DTO klase {@link KnjizaraDto}.
+ *
+ * Testira konstruktore, gettere i settere klase.
+ *
+ * @author Korisnik
+ */
 class KnjizaraDtoTest {
 
+	/**
+	 * Proverava konstruktor sa svim parametrima.
+	 */
     @Test
     void testKnjizaraDtoLongStringStringString() {
         KnjizaraDto dto = new KnjizaraDto(1L, "Laguna", "Beograd", "011123456");
@@ -20,6 +30,9 @@ class KnjizaraDtoTest {
         assertTrue(dto.getPonuda().isEmpty());
     }
 
+    /**
+     * Proverava postavljanje identifikatora DTO objekta.
+     */
     @Test
     void testSetId() {
         KnjizaraDto dto = new KnjizaraDto(null, "Laguna", "Beograd", "011123456");
@@ -28,6 +41,9 @@ class KnjizaraDtoTest {
         assertEquals(1L, dto.getId());
     }
 
+    /**
+     * Proverava postavljanje naziva knjižare.
+     */
     @Test
     void testSetNaziv() {
         KnjizaraDto dto = new KnjizaraDto(null, "Laguna", "Beograd", "011123456");
@@ -36,6 +52,9 @@ class KnjizaraDtoTest {
         assertEquals("Vulkan", dto.getNaziv());
     }
 
+    /**
+     * Proverava postavljanje lokacije knjižare.
+     */
     @Test
     void testSetLokacija() {
         KnjizaraDto dto = new KnjizaraDto(null, "Laguna", "Beograd", "011123456");
@@ -44,6 +63,9 @@ class KnjizaraDtoTest {
         assertEquals("Novi Sad", dto.getLokacija());
     }
 
+    /**
+     * Proverava postavljanje kontakt podataka knjižare.
+     */
     @Test
     void testSetKontakt() {
         KnjizaraDto dto = new KnjizaraDto(null, "Laguna", "Beograd", "011123456");
@@ -52,6 +74,9 @@ class KnjizaraDtoTest {
         assertEquals("064123456", dto.getKontakt());
     }
 
+    /**
+     * Proverava postavljanje ponude knjižare.
+     */
     @Test
     void testSetPonuda() {
         KnjizaraDto dto = new KnjizaraDto(null, "Laguna", "Beograd", "011123456");

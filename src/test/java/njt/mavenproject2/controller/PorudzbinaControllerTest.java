@@ -12,17 +12,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaController}.
+ *
+ * Testira dobavljanje svih porudžbina, dobavljanje porudžbine po identifikatoru,
+ * kreiranje, izmenu, brisanje, dobavljanje porudžbina za korisnika i obradu
+ * izuzetaka.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaControllerTest {
 
     private PorudzbinaServis service;
     private PorudzbinaController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         service = mock(PorudzbinaServis.class);
         controller = new PorudzbinaController(service);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih porudžbina.
+     */
     @Test
     void testGetAll() {
         PorudzbinaDto p1 = new PorudzbinaDto();
@@ -40,6 +55,11 @@ class PorudzbinaControllerTest {
         verify(service).findAll();
     }
 
+    /**
+     * Proverava uspešno dobavljanje porudžbine prema identifikatoru.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetById() throws Exception {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -54,6 +74,11 @@ class PorudzbinaControllerTest {
         verify(service).findById(1L);
     }
 
+    /**
+     * Proverava odgovor kontrolera kada porudžbina sa zadatim identifikatorom ne postoji.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetByIdException() throws Exception {
         when(service.findById(999L))
@@ -65,6 +90,11 @@ class PorudzbinaControllerTest {
         assertEquals("Porudžbina nije pronađena!", response.getBody());
     }
 
+    /**
+     * Proverava uspešno kreiranje nove porudžbine.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testCreate() throws Exception {
         PorudzbinaDto req = new PorudzbinaDto();
@@ -80,6 +110,11 @@ class PorudzbinaControllerTest {
         verify(service).create(req);
     }
 
+    /**
+     * Proverava odgovor kontrolera kada kreiranje porudžbine nije uspešno.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testCreateException() throws Exception {
         PorudzbinaDto req = new PorudzbinaDto();
@@ -93,6 +128,11 @@ class PorudzbinaControllerTest {
         assertEquals("korisnik_id i stavke su obavezni", response.getBody());
     }
 
+    /**
+     * Proverava uspešnu izmenu postojeće porudžbine.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdate() throws Exception {
         PorudzbinaDto req = new PorudzbinaDto();
@@ -108,6 +148,11 @@ class PorudzbinaControllerTest {
         verify(service).update(1L, req);
     }
 
+    /**
+     * Proverava odgovor kontrolera kada izmena porudžbine nije uspešna.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdateException() throws Exception {
         PorudzbinaDto req = new PorudzbinaDto();
@@ -121,6 +166,9 @@ class PorudzbinaControllerTest {
         assertEquals("Porudžbina ne postoji", response.getBody());
     }
 
+    /**
+     * Proverava uspešno brisanje porudžbine.
+     */
     @Test
     void testDelete() {
         ResponseEntity<?> response = controller.delete(1L);
@@ -130,6 +178,9 @@ class PorudzbinaControllerTest {
         verify(service).deleteById(1L);
     }
 
+    /**
+     * Proverava uspešno dobavljanje porudžbina za zadatog korisnika.
+     */
     @Test
     void testMoje() {
         PorudzbinaDto dto = new PorudzbinaDto();

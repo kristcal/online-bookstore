@@ -17,14 +17,44 @@ import njt.mavenproject2.repository.impl.KnjizaraRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaKnjizaraServis}.
+ *
+ * Testira prikaz dostupnosti knjige po knjižarama, dodavanje knjige u ponudu,
+ * izmenu količine, obradu grešaka i uklanjanje veze između knjige i knjižare.
+ *
+ * @author Korisnik
+ */
 class KnjigaKnjizaraServisTest {
 
+    /**
+     * Mock repozitorijum za veze između knjiga i knjižara.
+     */
     private KnjigaKnjizaraRepository repo;
+
+    /**
+     * Mock repozitorijum knjiga.
+     */
     private KnjigaRepository knjigaRepo;
+
+    /**
+     * Mock repozitorijum knjižara.
+     */
     private KnjizaraRepository knjizaraRepo;
+
+    /**
+     * Mock mapper za konverziju veze knjiga-knjižara.
+     */
     private KnjigaKnjizaraMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private KnjigaKnjizaraServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KnjigaKnjizaraRepository.class);
@@ -35,6 +65,9 @@ class KnjigaKnjizaraServisTest {
         servis = new KnjigaKnjizaraServis(repo, knjigaRepo, knjizaraRepo, mapper);
     }
 
+    /**
+     * Proverava uspešno pronalaženje dostupnosti za određenu knjigu.
+     */
     @Test
     void testListForKnjiga() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -54,6 +87,11 @@ class KnjigaKnjizaraServisTest {
         verify(mapper).toDo(kk);
     }
 
+    /**
+     * Proverava uspešno dodavanje knjige u ponudu knjižare.
+     *
+     * @throws Exception ukoliko knjiga ili knjižara nisu pronađene
+     */
     @Test
     void testAddOrSet() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -86,6 +124,11 @@ class KnjigaKnjizaraServisTest {
         verify(mapper).toDo(any(KnjigaKnjizara.class));
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma knjiga
+     */
     @Test
     void testAddOrSetKnjigaNePostoji() throws Exception {
         KnjigaKnjizaraDto dto = new KnjigaKnjizaraDto();
@@ -104,6 +147,11 @@ class KnjigaKnjizaraServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjižara ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma knjižara
+     */
     @Test
     void testAddOrSetKnjizaraNePostoji() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -126,6 +174,11 @@ class KnjigaKnjizaraServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava uspešno ažuriranje količine knjige u knjižari.
+     *
+     * @throws Exception ukoliko veza između knjige i knjižare nije pronađena
+     */
     @Test
     void testUpdateKolicina() throws Exception {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -150,6 +203,11 @@ class KnjigaKnjizaraServisTest {
         verify(mapper).toDo(kk);
     }
 
+    /**
+     * Proverava ponašanje sistema kada veza između knjige i knjižare ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma
+     */
     @Test
     void testUpdateKolicinaNePostoji() throws Exception {
         when(repo.findById(999L))
@@ -164,6 +222,9 @@ class KnjigaKnjizaraServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava uspešno uklanjanje veze između knjige i knjižare.
+     */
     @Test
     void testRemove() {
         servis.remove(1L);

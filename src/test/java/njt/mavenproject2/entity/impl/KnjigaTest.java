@@ -5,20 +5,33 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Knjiga}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class KnjigaTest {
 
     private Knjiga knjiga;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase Knjiga i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         knjiga = new Knjiga();
@@ -28,16 +41,25 @@ class KnjigaTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         knjiga = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Knjiga.
+     */
     @Test
     void testKnjiga() {
         assertNotNull(knjiga);
     }
 
+    /**
+     * Proverava konstruktor sa svim parametrima.
+     */
     @Test
     void testKnjigaLongStringStringDoubleStringLocalDateStringZanr() {
         Zanr zanr = new Zanr(1L, "Roman");
@@ -56,36 +78,54 @@ class KnjigaTest {
         assertEquals(zanr, knjiga.getZanr());
     }
 
+    /**
+     * Proverava postavljanje identifikatora knjige.
+     */
     @Test
     void testSetId() {
         knjiga.setId(1L);
         assertEquals(1L, knjiga.getId());
     }
 
+    /**
+     * Proverava postavljanje naziva knjige.
+     */
     @Test
     void testSetNaziv() {
         knjiga.setNaziv("1984");
         assertEquals("1984", knjiga.getNaziv());
     }
 
+    /**
+     * Proverava postavljanje opisa knjige.
+     */
     @Test
     void testSetOpis() {
         knjiga.setOpis("Distopijski roman");
         assertEquals("Distopijski roman", knjiga.getOpis());
     }
 
+    /**
+     * Proverava postavljanje cene knjige.
+     */
     @Test
     void testSetCena() {
         knjiga.setCena(999.99);
         assertEquals(999.99, knjiga.getCena());
     }
 
+    /**
+     * Proverava postavljanje ISBN broja knjige.
+     */
     @Test
     void testSetIsbn() {
         knjiga.setIsbn("978-86-123456-0-1");
         assertEquals("978-86-123456-0-1", knjiga.getIsbn());
     }
 
+    /**
+     * Proverava postavljanje godine izdanja knjige.
+     */
     @Test
     void testSetGodinaIzdanja() {
         LocalDate datum = LocalDate.of(2021, 5, 10);
@@ -93,12 +133,18 @@ class KnjigaTest {
         assertEquals(datum, knjiga.getGodinaIzdanja());
     }
 
+    /**
+     * Proverava postavljanje URL adrese slike knjige.
+     */
     @Test
     void testSetImageUrl() {
         knjiga.setImageUrl("cover.png");
         assertEquals("cover.png", knjiga.getImageUrl());
     }
 
+    /**
+     * Proverava postavljanje liste autora povezanih sa knjigom.
+     */
     @Test
     void testSetAutori() {
         KnjigaAutor ka = new KnjigaAutor();
@@ -112,6 +158,9 @@ class KnjigaTest {
         assertTrue(knjiga.getAutori().contains(ka));
     }
 
+    /**
+     * Proverava postavljanje žanra knjige.
+     */
     @Test
     void testSetZanr() {
         Zanr zanr = new Zanr(1L, "Naucna fantastika");
@@ -121,6 +170,9 @@ class KnjigaTest {
         assertEquals(zanr, knjiga.getZanr());
     }
 
+    /**
+     * Proverava postavljanje dostupnosti knjige u knjižarama.
+     */
     @Test
     void testSetDostupnost() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -134,6 +186,9 @@ class KnjigaTest {
         assertTrue(knjiga.getDostupnost().contains(kk));
     }
 
+    /**
+     * Proverava da su dve knjige jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Knjiga k1 = new Knjiga();
@@ -145,6 +200,9 @@ class KnjigaTest {
         assertTrue(k1.equals(k2));
     }
 
+    /**
+     * Proverava da dve knjige nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Knjiga k1 = new Knjiga();
@@ -156,18 +214,27 @@ class KnjigaTest {
         assertFalse(k1.equals(k2));
     }
 
+    /**
+     * Proverava da knjiga nije jednaka null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         knjiga.setId(1L);
         assertFalse(knjiga.equals(null));
     }
 
+    /**
+     * Proverava da knjiga nije jednaka objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         knjiga.setId(1L);
         assertFalse(knjiga.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za knjige sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Knjiga k1 = new Knjiga();
@@ -179,6 +246,9 @@ class KnjigaTest {
         assertEquals(k1.hashCode(), k2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz knjige.
+     */
     @Test
     void testToString() {
         knjiga = new Knjiga();
@@ -192,8 +262,10 @@ class KnjigaTest {
         assertTrue(s.contains("1984"));
         assertTrue(s.contains("123456789"));
     }
-    
-    
+
+    /**
+     * Proverava validaciju kada je naziv knjige prazan.
+     */
     @Test
     void testNazivNotBlank() {
 
@@ -208,6 +280,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine naziva knjige.
+     */
     @Test
     void testNazivMaxSize() {
 
@@ -222,6 +297,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine opisa knjige.
+     */
     @Test
     void testOpisMaxSize() {
 
@@ -236,6 +314,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada cena knjige nije postavljena.
+     */
     @Test
     void testCenaNotNull() {
 
@@ -250,6 +331,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada cena knjige nije pozitivna.
+     */
     @Test
     void testCenaPositive() {
 
@@ -264,6 +348,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je ISBN prazan.
+     */
     @Test
     void testIsbnNotBlank() {
 
@@ -278,6 +365,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine ISBN broja.
+     */
     @Test
     void testIsbnMaxSize() {
 
@@ -292,6 +382,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada godina izdanja nije postavljena.
+     */
     @Test
     void testGodinaIzdanjaNotNull() {
 
@@ -306,6 +399,9 @@ class KnjigaTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine URL adrese slike.
+     */
     @Test
     void testImageUrlMaxSize() {
 

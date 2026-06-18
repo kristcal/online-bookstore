@@ -12,17 +12,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaAdminController}.
+ *
+ * Testira dobavljanje svih porudžbina, dobavljanje jedne porudžbine,
+ * promenu statusa porudžbine i brisanje porudžbine preko administrativnog
+ * kontrolera.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaAdminControllerTest {
 
     private PorudzbinaServis servis;
     private PorudzbinaAdminController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         servis = mock(PorudzbinaServis.class);
         controller = new PorudzbinaAdminController(servis);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih porudžbina.
+     */
     @Test
     void testSve() {
         PorudzbinaDto p1 = new PorudzbinaDto();
@@ -42,6 +57,11 @@ class PorudzbinaAdminControllerTest {
         verify(servis).findAll();
     }
 
+    /**
+     * Proverava uspešno dobavljanje porudžbine prema identifikatoru.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testJedna() throws Exception {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -58,6 +78,11 @@ class PorudzbinaAdminControllerTest {
         verify(servis).findById(1L);
     }
 
+    /**
+     * Proverava uspešnu promenu statusa porudžbine.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testPromeniStatus() throws Exception {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -76,6 +101,9 @@ class PorudzbinaAdminControllerTest {
         verify(servis).promeniStatus(1L, "OBRADJENA");
     }
 
+    /**
+     * Proverava uspešno brisanje porudžbine.
+     */
     @Test
     void testObrisi() {
         ResponseEntity<Void> response =

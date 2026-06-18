@@ -17,14 +17,45 @@ import njt.mavenproject2.repository.impl.KnjigaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaAutorServis}.
+ *
+ * Testira prikaz autora za određenu knjigu, dodavanje autora knjizi,
+ * obradu grešaka kada knjiga ili autor ne postoje i uklanjanje veze
+ * između knjige i autora.
+ *
+ * @author Korisnik
+ */
 class KnjigaAutorServisTest {
 
+    /**
+     * Mock repozitorijum za veze između knjiga i autora.
+     */
     private KnjigaAutorRepository repo;
+
+    /**
+     * Mock repozitorijum knjiga.
+     */
     private KnjigaRepository knjigaRepo;
+
+    /**
+     * Mock repozitorijum autora.
+     */
     private AutorRepository autorRepo;
+
+    /**
+     * Mock mapper za konverziju veze knjiga-autor.
+     */
     private KnjigaAutorMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private KnjigaAutorServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KnjigaAutorRepository.class);
@@ -35,6 +66,9 @@ class KnjigaAutorServisTest {
         servis = new KnjigaAutorServis(repo, knjigaRepo, autorRepo, mapper);
     }
 
+    /**
+     * Proverava uspešno pronalaženje autora za određenu knjigu.
+     */
     @Test
     void testListForKnjiga() {
         KnjigaAutor ka = new KnjigaAutor();
@@ -54,6 +88,11 @@ class KnjigaAutorServisTest {
         verify(mapper).toDo(ka);
     }
 
+    /**
+     * Proverava uspešno dodavanje autora knjizi.
+     *
+     * @throws Exception ukoliko knjiga ili autor nisu pronađeni
+     */
     @Test
     void testAddAutorToKnjiga() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -86,6 +125,11 @@ class KnjigaAutorServisTest {
         verify(mapper).toDo(any(KnjigaAutor.class));
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma knjiga
+     */
     @Test
     void testAddAutorToKnjigaKnjigaNePostoji() throws Exception {
         KnjigaAutorDto dto = new KnjigaAutorDto();
@@ -104,6 +148,11 @@ class KnjigaAutorServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava ponašanje sistema kada autor ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma autora
+     */
     @Test
     void testAddAutorToKnjigaAutorNePostoji() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -126,6 +175,9 @@ class KnjigaAutorServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava uspešno uklanjanje veze između knjige i autora.
+     */
     @Test
     void testRemove() {
         servis.remove(1L);

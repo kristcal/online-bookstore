@@ -13,11 +13,31 @@ import njt.mavenproject2.entity.impl.Zanr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link ZanrRepository}.
+ *
+ * Testira osnovne CRUD operacije nad žanrovima korišćenjem
+ * mock objekta klase EntityManager.
+ *
+ * @author Korisnik
+ */
 class ZanrRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private ZanrRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new ZanrRepository();
@@ -28,6 +48,9 @@ class ZanrRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih žanrova.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Zanr> query = mock(TypedQuery.class);
@@ -52,6 +75,11 @@ class ZanrRepositoryTest {
         verify(query).getResultList();
     }
 
+    /**
+     * Proverava uspešno pronalaženje žanra prema identifikatoru.
+     *
+     * @throws Exception ukoliko žanr nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Zanr zanr = new Zanr();
@@ -65,6 +93,9 @@ class ZanrRepositoryTest {
         verify(entityManager).find(Zanr.class, 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada žanr nije pronađen.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Zanr.class, 999L)).thenReturn(null);
@@ -76,6 +107,9 @@ class ZanrRepositoryTest {
         verify(entityManager).find(Zanr.class, 999L);
     }
 
+    /**
+     * Proverava čuvanje novog žanra pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Zanr zanr = new Zanr();
@@ -87,6 +121,9 @@ class ZanrRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojećeg žanra pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Zanr zanr = new Zanr();
@@ -98,6 +135,9 @@ class ZanrRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje žanra prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Zanr zanr = new Zanr();
@@ -111,6 +151,9 @@ class ZanrRepositoryTest {
         verify(entityManager).remove(zanr);
     }
 
+    /**
+     * Proverava da se ne briše žanr koji ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Zanr.class, 999L)).thenReturn(null);

@@ -7,8 +7,18 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti DTO klase {@link PorudzbinaDto}.
+ *
+ * Testira gettere, settere i rad ugrađene klase Stavka.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaDtoTest {
 
+	/**
+	 * Proverava kreiranje praznog DTO objekta.
+	 */
     @Test
     void testPorudzbinaDto() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -18,6 +28,9 @@ class PorudzbinaDtoTest {
         assertTrue(dto.getStavke().isEmpty());
     }
 
+    /**
+     * Proverava postavljanje identifikatora porudžbine.
+     */
     @Test
     void testSetId() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -26,6 +39,9 @@ class PorudzbinaDtoTest {
         assertEquals(1L, dto.getId());
     }
 
+    /**
+     * Proverava postavljanje datuma porudžbine.
+     */
     @Test
     void testSetDatum() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -36,6 +52,9 @@ class PorudzbinaDtoTest {
         assertEquals(datum, dto.getDatum());
     }
 
+    /**
+     * Proverava postavljanje identifikatora korisnika.
+     */
     @Test
     void testSetKorisnikId() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -44,6 +63,9 @@ class PorudzbinaDtoTest {
         assertEquals(5L, dto.getKorisnikId());
     }
 
+    /**
+     * Proverava postavljanje ukupnog iznosa porudžbine.
+     */
     @Test
     void testSetUkupanIznos() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -52,6 +74,9 @@ class PorudzbinaDtoTest {
         assertEquals(2500.0, dto.getUkupanIznos());
     }
 
+    /**
+     * Proverava postavljanje statusa porudžbine.
+     */
     @Test
     void testSetStatus() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -60,6 +85,9 @@ class PorudzbinaDtoTest {
         assertEquals("KREIRANA", dto.getStatus());
     }
 
+    /**
+     * Proverava postavljanje liste stavki porudžbine.
+     */
     @Test
     void testSetStavke() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -73,6 +101,9 @@ class PorudzbinaDtoTest {
         assertEquals(1L, dto.getStavke().get(0).getKnjigaId());
     }
 
+    /**
+     * Proverava postavljanje identifikatora knjige.
+     */
     @Test
     void testStavkaSetKnjigaId() {
         PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
@@ -81,6 +112,9 @@ class PorudzbinaDtoTest {
         assertEquals(1L, stavka.getKnjigaId());
     }
 
+    /**
+     * Proverava postavljanje količine knjiga.
+     */
     @Test
     void testStavkaSetKolicina() {
         PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
@@ -89,6 +123,9 @@ class PorudzbinaDtoTest {
         assertEquals(3, stavka.getKolicina());
     }
 
+    /**
+     * Proverava postavljanje cene stavke.
+     */
     @Test
     void testStavkaSetCena() {
         PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
@@ -97,6 +134,9 @@ class PorudzbinaDtoTest {
         assertEquals(1000.0, stavka.getCena());
     }
 
+    /**
+     * Proverava postavljanje naziva knjige.
+     */
     @Test
     void testStavkaSetNaziv() {
         PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();

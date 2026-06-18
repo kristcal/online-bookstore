@@ -13,12 +13,33 @@ import njt.mavenproject2.repository.impl.AutorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AutorServis}.
+ *
+ * Testira pronalaženje, kreiranje, izmenu i brisanje autora.
+ *
+ * @author Korisnik
+ */
 class AutorServisTest {
 
+    /**
+     * Mock repozitorijum autora.
+     */
     private AutorRepository repo;
+
+    /**
+     * Mock mapper za konverziju autora.
+     */
     private AutorMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private AutorServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(AutorRepository.class);
@@ -26,6 +47,9 @@ class AutorServisTest {
         servis = new AutorServis(repo, mapper);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih autora.
+     */
     @Test
     void testFindAll() {
         Autor autor = new Autor();
@@ -41,6 +65,11 @@ class AutorServisTest {
         verify(mapper).toDo(autor);
     }
 
+    /**
+     * Proverava uspešno pronalaženje autora prema identifikatoru.
+     *
+     * @throws Exception ukoliko autor nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Autor autor = new Autor();
@@ -59,6 +88,9 @@ class AutorServisTest {
         verify(mapper).toDo(autor);
     }
 
+    /**
+     * Proverava uspešno kreiranje autora.
+     */
     @Test
     void testCreate() {
         AutorDto dto = new AutorDto();
@@ -82,6 +114,9 @@ class AutorServisTest {
         verify(mapper).toDo(autor);
     }
 
+    /**
+     * Proverava uspešno ažuriranje autora.
+     */
     @Test
     void testUpdate() {
         AutorDto dto = new AutorDto();
@@ -107,6 +142,9 @@ class AutorServisTest {
         verify(mapper).toDo(autor);
     }
 
+    /**
+     * Proverava uspešno brisanje autora prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         servis.deleteById(1L);

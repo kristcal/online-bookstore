@@ -13,17 +13,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaAutorController}.
+ *
+ * Testira dobavljanje autora za knjigu, dodavanje autora knjizi,
+ * obradu izuzetka prilikom dodavanja i uklanjanje veze knjiga-autor.
+ *
+ * @author Korisnik
+ */
 class KnjigaAutorControllerTest {
 
     private KnjigaAutorServis servis;
     private KnjigaAutorController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         servis = mock(KnjigaAutorServis.class);
         controller = new KnjigaAutorController(servis);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste autora za zadatu knjigu.
+     */
     @Test
     void testList() {
         KnjigaAutorDto dto = new KnjigaAutorDto(1L, 2L, "Pisac");
@@ -40,6 +54,11 @@ class KnjigaAutorControllerTest {
         verify(servis).listForKnjiga(10L);
     }
 
+    /**
+     * Proverava uspešno dodavanje autora knjizi.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAdd() throws Exception {
         KnjigaAutorDto dto = new KnjigaAutorDto(null, 2L, "Pisac");
@@ -56,6 +75,11 @@ class KnjigaAutorControllerTest {
         verify(servis).addAutorToKnjiga(10L, dto);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom dodavanja autora knjizi.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAddException() throws Exception {
         KnjigaAutorDto dto = new KnjigaAutorDto(null, 2L, "Pisac");
@@ -71,6 +95,9 @@ class KnjigaAutorControllerTest {
         assertEquals("Autor nije pronađen!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno uklanjanje veze između knjige i autora.
+     */
     @Test
     void testRemove() {
         ResponseEntity<Void> response =

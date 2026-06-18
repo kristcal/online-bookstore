@@ -13,11 +13,31 @@ import njt.mavenproject2.entity.impl.Autor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AutorRepository}.
+ *
+ * Testira pronalaženje, čuvanje i brisanje autora korišćenjem
+ * mock objekta klase EntityManager.
+ *
+ * @author Korisnik
+ */
 class AutorRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private AutorRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new AutorRepository();
@@ -28,6 +48,9 @@ class AutorRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih autora.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Autor> query = mock(TypedQuery.class);
@@ -52,6 +75,11 @@ class AutorRepositoryTest {
         verify(query).getResultList();
     }
 
+    /**
+     * Proverava uspešno pronalaženje autora prema identifikatoru.
+     *
+     * @throws Exception ukoliko autor nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Autor autor = new Autor();
@@ -65,6 +93,9 @@ class AutorRepositoryTest {
         verify(entityManager).find(Autor.class, 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada autor nije pronađen.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Autor.class, 999L)).thenReturn(null);
@@ -76,6 +107,9 @@ class AutorRepositoryTest {
         verify(entityManager).find(Autor.class, 999L);
     }
 
+    /**
+     * Proverava čuvanje novog autora pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Autor autor = new Autor();
@@ -87,6 +121,9 @@ class AutorRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojećeg autora pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Autor autor = new Autor();
@@ -98,6 +135,9 @@ class AutorRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje autora prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Autor autor = new Autor();
@@ -111,6 +151,9 @@ class AutorRepositoryTest {
         verify(entityManager).remove(autor);
     }
 
+    /**
+     * Proverava da se ne briše autor koji ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Autor.class, 999L)).thenReturn(null);

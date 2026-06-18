@@ -4,20 +4,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Korisnik}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class KorisnikTest {
 
     private Korisnik korisnik;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase Korisnik i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         korisnik = new Korisnik();
@@ -27,16 +40,25 @@ class KorisnikTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         korisnik = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Korisnik.
+     */
     @Test
     void testKorisnik() {
         assertNotNull(korisnik);
     }
 
+    /**
+     * Proverava konstruktor sa svim parametrima.
+     */
     @Test
     void testKorisnikLongStringStringStringString() {
         korisnik = new Korisnik(
@@ -54,42 +76,63 @@ class KorisnikTest {
         assertEquals("123456", korisnik.getLozinka());
     }
 
+    /**
+     * Proverava postavljanje identifikatora korisnika.
+     */
     @Test
     void testSetId() {
         korisnik.setId(1L);
         assertEquals(1L, korisnik.getId());
     }
 
+    /**
+     * Proverava postavljanje imena korisnika.
+     */
     @Test
     void testSetIme() {
         korisnik.setIme("Kristina");
         assertEquals("Kristina", korisnik.getIme());
     }
 
+    /**
+     * Proverava postavljanje prezimena korisnika.
+     */
     @Test
     void testSetPrezime() {
         korisnik.setPrezime("Calic");
         assertEquals("Calic", korisnik.getPrezime());
     }
 
+    /**
+     * Proverava postavljanje email adrese korisnika.
+     */
     @Test
     void testSetEmail() {
         korisnik.setEmail("test@gmail.com");
         assertEquals("test@gmail.com", korisnik.getEmail());
     }
 
+    /**
+     * Proverava postavljanje lozinke korisnika.
+     */
     @Test
     void testSetLozinka() {
         korisnik.setLozinka("123456");
         assertEquals("123456", korisnik.getLozinka());
     }
 
+    /**
+     * Proverava postavljanje uloge korisnika.
+     */
     @Test
     void testSetUloga() {
         korisnik.setUloga("ADMIN");
         assertEquals("ADMIN", korisnik.getUloga());
     }
 
+    /**
+     * Proverava postavljanje adrese korisnika.
+     */
     @Test
     void testSetAdresa() {
         Adresa adresa = new Adresa();
@@ -100,6 +143,9 @@ class KorisnikTest {
         assertEquals(adresa, korisnik.getAdresa());
     }
 
+    /**
+     * Proverava postavljanje liste porudžbina korisnika.
+     */
     @Test
     void testSetPorudzbine() {
         Porudzbina p = new Porudzbina();
@@ -114,6 +160,9 @@ class KorisnikTest {
         assertTrue(korisnik.getPorudzbine().contains(p));
     }
 
+    /**
+     * Proverava da su dva korisnika jednaka kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Korisnik k1 = new Korisnik();
@@ -125,6 +174,9 @@ class KorisnikTest {
         assertTrue(k1.equals(k2));
     }
 
+    /**
+     * Proverava da dva korisnika nisu jednaka kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Korisnik k1 = new Korisnik();
@@ -136,18 +188,27 @@ class KorisnikTest {
         assertFalse(k1.equals(k2));
     }
 
+    /**
+     * Proverava da korisnik nije jednak null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         korisnik.setId(1L);
         assertFalse(korisnik.equals(null));
     }
 
+    /**
+     * Proverava da korisnik nije jednak objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         korisnik.setId(1L);
         assertFalse(korisnik.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za korisnike sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Korisnik k1 = new Korisnik();
@@ -159,6 +220,9 @@ class KorisnikTest {
         assertEquals(k1.hashCode(), k2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz korisnika.
+     */
     @Test
     void testToString() {
         korisnik.setId(1L);
@@ -175,7 +239,10 @@ class KorisnikTest {
         assertTrue(s.contains("kristina@gmail.com"));
         assertTrue(s.contains("ADMIN"));
     }
-    
+
+    /**
+     * Proverava validaciju kada je ime korisnika prazno.
+     */
     @Test
     void testImeNotBlank() {
 
@@ -190,6 +257,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine imena korisnika.
+     */
     @Test
     void testImeMaxSize() {
 
@@ -204,6 +274,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je prezime korisnika prazno.
+     */
     @Test
     void testPrezimeNotBlank() {
 
@@ -218,6 +291,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine prezimena korisnika.
+     */
     @Test
     void testPrezimeMaxSize() {
 
@@ -232,6 +308,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je email adresa prazna.
+     */
     @Test
     void testEmailNotBlank() {
 
@@ -246,6 +325,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju formata email adrese.
+     */
     @Test
     void testEmailFormat() {
 
@@ -260,6 +342,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine email adrese.
+     */
     @Test
     void testEmailMaxSize() {
 
@@ -274,6 +359,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju minimalne dužine lozinke.
+     */
     @Test
     void testLozinkaMinSize() {
 
@@ -288,6 +376,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine lozinke.
+     */
     @Test
     void testLozinkaMaxSize() {
 
@@ -302,6 +393,9 @@ class KorisnikTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine uloge korisnika.
+     */
     @Test
     void testUlogaMaxSize() {
 
@@ -315,5 +409,4 @@ class KorisnikTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("uloga"))
         );
     }
-    
 }

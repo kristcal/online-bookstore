@@ -13,11 +13,32 @@ import njt.mavenproject2.entity.impl.Porudzbina;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaRepository}.
+ *
+ * Testira osnovne CRUD operacije nad porudžbinama, pronalaženje
+ * porudžbina određenog korisnika i učitavanje porudžbine sa povezanim
+ * stavkama.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private PorudzbinaRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new PorudzbinaRepository();
@@ -28,6 +49,9 @@ class PorudzbinaRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih porudžbina.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Porudzbina> query = mock(TypedQuery.class);
@@ -43,6 +67,11 @@ class PorudzbinaRepositoryTest {
         assertEquals(1, rezultat.size());
     }
 
+    /**
+     * Proverava uspešno pronalaženje porudžbine prema identifikatoru.
+     *
+     * @throws Exception ukoliko porudžbina nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         Porudzbina p = new Porudzbina();
@@ -55,6 +84,9 @@ class PorudzbinaRepositoryTest {
         assertEquals(1L, rezultat.getId());
     }
 
+    /**
+     * Proverava ponašanje sistema kada porudžbina nije pronađena.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Porudzbina.class, 999L)).thenReturn(null);
@@ -65,6 +97,9 @@ class PorudzbinaRepositoryTest {
         assertEquals("Porudžbina nije pronađena!", e.getMessage());
     }
 
+    /**
+     * Proverava čuvanje nove porudžbine pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Porudzbina p = new Porudzbina();
@@ -75,6 +110,9 @@ class PorudzbinaRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojeće porudžbine pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Porudzbina p = new Porudzbina();
@@ -86,6 +124,9 @@ class PorudzbinaRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje porudžbine prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Porudzbina p = new Porudzbina();
@@ -98,6 +139,9 @@ class PorudzbinaRepositoryTest {
         verify(entityManager).remove(p);
     }
 
+    /**
+     * Proverava da se ne briše porudžbina koja ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Porudzbina.class, 999L)).thenReturn(null);
@@ -107,6 +151,9 @@ class PorudzbinaRepositoryTest {
         verify(entityManager, never()).remove(any());
     }
 
+    /**
+     * Proverava pronalaženje porudžbina određenog korisnika.
+     */
     @Test
     void testFindByKorisnikId() {
         TypedQuery<Porudzbina> query = mock(TypedQuery.class);
@@ -124,6 +171,11 @@ class PorudzbinaRepositoryTest {
         verify(query).setParameter("kid", 10L);
     }
 
+    /**
+     * Proverava učitavanje porudžbine zajedno sa stavkama i knjigama.
+     *
+     * @throws Exception ukoliko porudžbina nije pronađena
+     */
     @Test
     void testFindOneFull() throws Exception {
         TypedQuery<Porudzbina> query = mock(TypedQuery.class);
@@ -142,6 +194,10 @@ class PorudzbinaRepositoryTest {
         verify(query).setParameter("id", 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada porudžbina sa povezanim stavkama
+     * nije pronađena.
+     */
     @Test
     void testFindOneFullNePostoji() {
         TypedQuery<Porudzbina> query = mock(TypedQuery.class);

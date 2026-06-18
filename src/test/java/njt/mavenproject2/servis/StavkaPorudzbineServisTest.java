@@ -17,14 +17,45 @@ import njt.mavenproject2.repository.impl.StavkaPorudzbineRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link StavkaPorudzbineServis}.
+ *
+ * Testira prikaz, dodavanje, izmenu i brisanje stavki porudžbine.
+ * Posebno proverava automatsku dodelu rednog broja stavke i ponovno
+ * računanje ukupnog iznosa porudžbine nakon izmene stavki.
+ *
+ * @author Korisnik
+ */
 class StavkaPorudzbineServisTest {
 
+    /**
+     * Mock repozitorijum stavki porudžbine.
+     */
     private StavkaPorudzbineRepository repo;
+
+    /**
+     * Mock repozitorijum porudžbina.
+     */
     private PorudzbinaRepository porRepo;
+
+    /**
+     * Mock repozitorijum knjiga.
+     */
     private KnjigaRepository knjigaRepo;
+
+    /**
+     * Mock mapper za konverziju stavki porudžbine.
+     */
     private StavkaPorudzbineMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private StavkaPorudzbineServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(StavkaPorudzbineRepository.class);
@@ -35,6 +66,9 @@ class StavkaPorudzbineServisTest {
         servis = new StavkaPorudzbineServis(repo, porRepo, knjigaRepo, mapper);
     }
 
+    /**
+     * Proverava uspešno pronalaženje stavki određene porudžbine.
+     */
     @Test
     void testListForPorudzbina() {
         StavkaPorudzbine stavka = new StavkaPorudzbine();
@@ -54,6 +88,11 @@ class StavkaPorudzbineServisTest {
         verify(mapper).toDo(stavka);
     }
 
+    /**
+     * Proverava uspešno dodavanje stavke u porudžbinu.
+     *
+     * @throws Exception ukoliko porudžbina ili knjiga nisu pronađene
+     */
     @Test
     void testAdd() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -98,6 +137,11 @@ class StavkaPorudzbineServisTest {
         verify(porRepo).save(porudzbina);
     }
 
+    /**
+     * Proverava automatsku dodelu rednog broja ako nije prosleđen.
+     *
+     * @throws Exception ukoliko porudžbina ili knjiga nisu pronađene
+     */
     @Test
     void testAddDodeljujeRbAkoNijePoslat() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -127,6 +171,11 @@ class StavkaPorudzbineServisTest {
         verify(repo).findMaxRbForPorudzbina(10L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada porudžbina ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma porudžbina
+     */
     @Test
     void testAddPorudzbinaNePostoji() throws Exception {
         StavkaPorudzbineDto dto = new StavkaPorudzbineDto();
@@ -141,6 +190,11 @@ class StavkaPorudzbineServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma knjiga
+     */
     @Test
     void testAddKnjigaNePostoji() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -158,6 +212,11 @@ class StavkaPorudzbineServisTest {
         verify(repo, never()).save(any());
     }
 
+    /**
+     * Proverava uspešno ažuriranje stavke porudžbine.
+     *
+     * @throws Exception ukoliko stavka nije pronađena
+     */
     @Test
     void testUpdate() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -193,6 +252,11 @@ class StavkaPorudzbineServisTest {
         verify(porRepo).save(porudzbina);
     }
 
+    /**
+     * Proverava promenu knjige na stavki porudžbine.
+     *
+     * @throws Exception ukoliko stavka ili knjiga nisu pronađene
+     */
     @Test
     void testUpdateMenjaKnjigu() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -220,6 +284,11 @@ class StavkaPorudzbineServisTest {
         verify(knjigaRepo).findById(5L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada stavka ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma stavki
+     */
     @Test
     void testUpdateNePostoji() throws Exception {
         when(repo.findById(1L))
@@ -232,6 +301,11 @@ class StavkaPorudzbineServisTest {
         verify(repo).findById(1L);
     }
 
+    /**
+     * Proverava uspešno uklanjanje stavke porudžbine.
+     *
+     * @throws Exception ukoliko stavka ili porudžbina nisu pronađene
+     */
     @Test
     void testRemove() throws Exception {
         Porudzbina porudzbina = new Porudzbina();
@@ -252,6 +326,11 @@ class StavkaPorudzbineServisTest {
         assertEquals(0.0, porudzbina.getUkupanIznos());
     }
 
+    /**
+     * Proverava da uklanjanje nepostojeće stavke ne baca grešku.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma koji se ignoriše
+     */
     @Test
     void testRemoveNePostojiNeBacaGresku() throws Exception {
         when(repo.findById(1L))

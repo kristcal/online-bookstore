@@ -13,11 +13,31 @@ import njt.mavenproject2.entity.impl.Knjizara;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjizaraRepository}.
+ *
+ * Testira osnovne CRUD operacije nad knjižarama korišćenjem
+ * mock objekta klase EntityManager.
+ *
+ * @author Korisnik
+ */
 class KnjizaraRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private KnjizaraRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new KnjizaraRepository();
@@ -28,6 +48,9 @@ class KnjizaraRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih knjižara.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Knjizara> query = mock(TypedQuery.class);
@@ -52,6 +75,11 @@ class KnjizaraRepositoryTest {
         verify(query).getResultList();
     }
 
+    /**
+     * Proverava uspešno pronalaženje knjižare prema identifikatoru.
+     *
+     * @throws Exception ukoliko knjižara nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         Knjizara knjizara = new Knjizara();
@@ -65,6 +93,9 @@ class KnjizaraRepositoryTest {
         verify(entityManager).find(Knjizara.class, 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjižara nije pronađena.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Knjizara.class, 999L)).thenReturn(null);
@@ -76,6 +107,9 @@ class KnjizaraRepositoryTest {
         verify(entityManager).find(Knjizara.class, 999L);
     }
 
+    /**
+     * Proverava čuvanje nove knjižare pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Knjizara knjizara = new Knjizara();
@@ -87,6 +121,9 @@ class KnjizaraRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojeće knjižare pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Knjizara knjizara = new Knjizara();
@@ -98,6 +135,9 @@ class KnjizaraRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje knjižare prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Knjizara knjizara = new Knjizara();
@@ -111,6 +151,9 @@ class KnjizaraRepositoryTest {
         verify(entityManager).remove(knjizara);
     }
 
+    /**
+     * Proverava da se ne briše knjižara koja ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Knjizara.class, 999L)).thenReturn(null);

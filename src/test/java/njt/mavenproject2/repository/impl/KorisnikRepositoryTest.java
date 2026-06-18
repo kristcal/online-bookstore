@@ -14,11 +14,31 @@ import njt.mavenproject2.entity.impl.Korisnik;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KorisnikRepository}.
+ *
+ * Testira osnovne CRUD operacije nad korisnicima, kao i pronalaženje
+ * korisnika prema email adresi.
+ *
+ * @author Korisnik
+ */
 class KorisnikRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private KorisnikRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new KorisnikRepository();
@@ -29,6 +49,9 @@ class KorisnikRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih korisnika.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Korisnik> query = mock(TypedQuery.class);
@@ -53,6 +76,11 @@ class KorisnikRepositoryTest {
         verify(query).getResultList();
     }
 
+    /**
+     * Proverava uspešno pronalaženje korisnika prema identifikatoru.
+     *
+     * @throws Exception ukoliko korisnik nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Korisnik korisnik = new Korisnik();
@@ -66,6 +94,9 @@ class KorisnikRepositoryTest {
         verify(entityManager).find(Korisnik.class, 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada korisnik nije pronađen.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Korisnik.class, 999L)).thenReturn(null);
@@ -77,6 +108,9 @@ class KorisnikRepositoryTest {
         verify(entityManager).find(Korisnik.class, 999L);
     }
 
+    /**
+     * Proverava čuvanje novog korisnika pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Korisnik korisnik = new Korisnik();
@@ -88,6 +122,9 @@ class KorisnikRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojećeg korisnika pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Korisnik korisnik = new Korisnik();
@@ -99,6 +136,9 @@ class KorisnikRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje korisnika prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Korisnik korisnik = new Korisnik();
@@ -112,6 +152,9 @@ class KorisnikRepositoryTest {
         verify(entityManager).remove(korisnik);
     }
 
+    /**
+     * Proverava da se ne briše korisnik koji ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Korisnik.class, 999L)).thenReturn(null);
@@ -122,6 +165,9 @@ class KorisnikRepositoryTest {
         verify(entityManager, never()).remove(any());
     }
 
+    /**
+     * Proverava uspešno pronalaženje korisnika prema email adresi.
+     */
     @Test
     void testFindByEmail() {
         TypedQuery<Korisnik> query = mock(TypedQuery.class);
@@ -145,6 +191,10 @@ class KorisnikRepositoryTest {
         verify(query).getSingleResult();
     }
 
+    /**
+     * Proverava ponašanje sistema kada korisnik sa zadatom email adresom
+     * ne postoji.
+     */
     @Test
     void testFindByEmailNePostoji() {
         TypedQuery<Korisnik> query = mock(TypedQuery.class);

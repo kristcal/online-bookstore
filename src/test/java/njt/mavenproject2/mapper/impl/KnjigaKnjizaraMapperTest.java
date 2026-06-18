@@ -8,10 +8,25 @@ import njt.mavenproject2.dto.impl.KnjigaKnjizaraDto;
 import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.entity.impl.Knjizara;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaKnjizaraMapper}.
+ *
+ * Testira konverziju između entiteta KnjigaKnjizara i DTO objekta
+ * KnjigaKnjizaraDto, uključujući slučajeve kada povezana knjižara
+ * nije postavljena ili kada je prosleđena null vrednost.
+ *
+ * @author Korisnik
+ */
 class KnjigaKnjizaraMapperTest {
 
+    /**
+     * Mapper koji se testira.
+     */
     private final KnjigaKnjizaraMapper mapper = new KnjigaKnjizaraMapper();
 
+    /**
+     * Proverava konverziju entiteta KnjigaKnjizara u DTO objekat.
+     */
     @Test
     void testToDo() {
         Knjizara knjizara = new Knjizara();
@@ -30,6 +45,9 @@ class KnjigaKnjizaraMapperTest {
         assertEquals(10, dto.getKolicina());
     }
 
+    /**
+     * Proverava konverziju kada veza nema postavljenu knjižaru.
+     */
     @Test
     void testToDoBezKnjizare() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -45,11 +63,20 @@ class KnjigaKnjizaraMapperTest {
         assertEquals(10, dto.getKolicina());
     }
 
+    /**
+     * Proverava da konverzija null entiteta vraća null vrednost.
+     */
     @Test
     void testToDoNull() {
         assertNull(mapper.toDo(null));
     }
 
+    /**
+     * Proverava konverziju DTO objekta u entitet KnjigaKnjizara.
+     *
+     * Povezani entiteti Knjiga i Knjižara ne postavljaju se u mapper-u,
+     * već u servisnom sloju.
+     */
     @Test
     void testToEntity() {
         KnjigaKnjizaraDto dto = new KnjigaKnjizaraDto();
@@ -62,10 +89,13 @@ class KnjigaKnjizaraMapperTest {
         assertNotNull(kk);
         assertEquals(1L, kk.getId());
         assertEquals(10, kk.getKolicina());
-        assertNull(kk.getKnjiga()); // postavlja servis
-        assertNull(kk.getKnjizara()); // postavlja servis
+        assertNull(kk.getKnjiga());
+        assertNull(kk.getKnjizara());
     }
 
+    /**
+     * Proverava da konverzija null DTO objekta vraća null vrednost.
+     */
     @Test
     void testToEntityNull() {
         assertNull(mapper.toEntity(null));

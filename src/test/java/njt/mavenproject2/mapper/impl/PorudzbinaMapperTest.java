@@ -10,10 +10,25 @@ import njt.mavenproject2.dto.impl.PorudzbinaDto;
 import njt.mavenproject2.entity.impl.Korisnik;
 import njt.mavenproject2.entity.impl.Porudzbina;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaMapper}.
+ *
+ * Testira konverziju između entiteta Porudzbina i DTO objekta PorudzbinaDto,
+ * uključujući podatke o korisniku, datumu, ukupnom iznosu i statusu
+ * porudžbine.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaMapperTest {
 
+    /**
+     * Mapper koji se testira.
+     */
     private final PorudzbinaMapper mapper = new PorudzbinaMapper();
 
+    /**
+     * Proverava konverziju entiteta Porudzbina u DTO objekat.
+     */
     @Test
     void testToDo() {
         Korisnik korisnik = new Korisnik();
@@ -36,6 +51,9 @@ class PorudzbinaMapperTest {
         assertEquals(5L, dto.getKorisnikId());
     }
 
+    /**
+     * Proverava konverziju porudžbine koja nema povezanog korisnika.
+     */
     @Test
     void testToDoBezKorisnika() {
         Porudzbina p = new Porudzbina();
@@ -49,11 +67,17 @@ class PorudzbinaMapperTest {
         assertNull(dto.getKorisnikId());
     }
 
+    /**
+     * Proverava da konverzija null entiteta vraća null vrednost.
+     */
     @Test
     void testToDoNull() {
         assertNull(mapper.toDo(null));
     }
 
+    /**
+     * Proverava konverziju DTO objekta PorudzbinaDto u entitet Porudzbina.
+     */
     @Test
     void testToEntity() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -71,6 +95,9 @@ class PorudzbinaMapperTest {
         assertEquals("OBRADJENA", p.getStatus());
     }
 
+    /**
+     * Proverava da se postavlja podrazumevani status kada status nije prosleđen.
+     */
     @Test
     void testToEntityDefaultStatus() {
         PorudzbinaDto dto = new PorudzbinaDto();
@@ -82,6 +109,9 @@ class PorudzbinaMapperTest {
         assertEquals("KREIRANA", p.getStatus());
     }
 
+    /**
+     * Proverava da konverzija null DTO objekta vraća null vrednost.
+     */
     @Test
     void testToEntityNull() {
         assertNull(mapper.toEntity(null));

@@ -12,17 +12,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AutorController}.
+ *
+ * Testira dobavljanje svih autora i slučaj kada lista autora ne sadrži
+ * nijedan element.
+ *
+ * @author Korisnik
+ */
 class AutorControllerTest {
 
     private AutorRepository repo;
     private AutorController controller;
 
+    /**
+     * Inicijalizuje mock repozitorijum i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(AutorRepository.class);
         controller = new AutorController(repo);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih autora.
+     */
     @Test
     void testGetAll() {
         Autor a1 = new Autor();
@@ -55,6 +69,9 @@ class AutorControllerTest {
         verify(repo).findAll();
     }
 
+    /**
+     * Proverava dobavljanje autora kada repozitorijum vraća praznu listu.
+     */
     @Test
     void testGetAllPraznaLista() {
         when(repo.findAll()).thenReturn(List.of());

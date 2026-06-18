@@ -13,17 +13,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaStavkeController}.
+ *
+ * Testira dobavljanje stavki porudžbine, dodavanje stavke, izmenu stavke,
+ * brisanje stavke i obradu izuzetaka.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaStavkeControllerTest {
 
     private StavkaPorudzbineServis servis;
     private PorudzbinaStavkeController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         servis = mock(StavkaPorudzbineServis.class);
         controller = new PorudzbinaStavkeController(servis);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste stavki za zadatu porudžbinu.
+     */
     @Test
     void testList() {
         StavkaPorudzbineDto dto =
@@ -42,6 +56,11 @@ class PorudzbinaStavkeControllerTest {
         verify(servis).listForPorudzbina(5L);
     }
 
+    /**
+     * Proverava uspešno dodavanje stavke u porudžbinu.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAdd() throws Exception {
         StavkaPorudzbineDto dto =
@@ -61,6 +80,11 @@ class PorudzbinaStavkeControllerTest {
         verify(servis).add(5L, dto);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom dodavanja stavke u porudžbinu.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAddException() throws Exception {
         StavkaPorudzbineDto dto =
@@ -77,6 +101,11 @@ class PorudzbinaStavkeControllerTest {
         assertEquals("Porudžbina nije pronađena!", e.getReason());
     }
 
+    /**
+     * Proverava uspešnu izmenu stavke porudžbine.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdate() throws Exception {
         StavkaPorudzbineDto dto =
@@ -93,6 +122,11 @@ class PorudzbinaStavkeControllerTest {
         verify(servis).update(1L, dto);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom izmene stavke porudžbine.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdateException() throws Exception {
         StavkaPorudzbineDto dto =
@@ -109,6 +143,9 @@ class PorudzbinaStavkeControllerTest {
         assertEquals("Stavka porudžbine nije pronađena!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno brisanje stavke iz porudžbine.
+     */
     @Test
     void testDelete() {
         ResponseEntity<Void> response =

@@ -5,18 +5,33 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.*;
 import java.util.Set;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Porudzbina}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaTest {
 
     private Porudzbina porudzbina;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase Porudzbina i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         porudzbina = new Porudzbina();
@@ -26,22 +41,34 @@ class PorudzbinaTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         porudzbina = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Porudzbina.
+     */
     @Test
     void testPorudzbina() {
         assertNotNull(porudzbina);
     }
 
+    /**
+     * Proverava postavljanje identifikatora porudžbine.
+     */
     @Test
     void testSetId() {
         porudzbina.setId(1L);
         assertEquals(1L, porudzbina.getId());
     }
 
+    /**
+     * Proverava postavljanje datuma porudžbine.
+     */
     @Test
     void testSetDatum() {
         LocalDateTime datum = LocalDateTime.now();
@@ -51,6 +78,9 @@ class PorudzbinaTest {
         assertEquals(datum, porudzbina.getDatum());
     }
 
+    /**
+     * Proverava postavljanje ukupnog iznosa porudžbine.
+     */
     @Test
     void testSetUkupanIznos() {
         porudzbina.setUkupanIznos(5000.0);
@@ -58,6 +88,9 @@ class PorudzbinaTest {
         assertEquals(5000.0, porudzbina.getUkupanIznos());
     }
 
+    /**
+     * Proverava postavljanje statusa porudžbine.
+     */
     @Test
     void testSetStatus() {
         porudzbina.setStatus("PLACENA");
@@ -65,6 +98,9 @@ class PorudzbinaTest {
         assertEquals("PLACENA", porudzbina.getStatus());
     }
 
+    /**
+     * Proverava postavljanje korisnika koji je napravio porudžbinu.
+     */
     @Test
     void testSetKorisnik() {
         Korisnik k = new Korisnik();
@@ -74,6 +110,9 @@ class PorudzbinaTest {
         assertEquals(k, porudzbina.getKorisnik());
     }
 
+    /**
+     * Proverava postavljanje plaćanja povezanog sa porudžbinom.
+     */
     @Test
     void testSetPlacanje() {
         Placanje p = new Placanje();
@@ -83,6 +122,9 @@ class PorudzbinaTest {
         assertEquals(p, porudzbina.getPlacanje());
     }
 
+    /**
+     * Proverava postavljanje liste stavki porudžbine.
+     */
     @Test
     void testSetStavke() {
         StavkaPorudzbine s = new StavkaPorudzbine();
@@ -95,6 +137,9 @@ class PorudzbinaTest {
         assertEquals(1, porudzbina.getStavke().size());
     }
 
+    /**
+     * Proverava da su dve porudžbine jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Porudzbina p1 = new Porudzbina();
@@ -106,6 +151,9 @@ class PorudzbinaTest {
         assertTrue(p1.equals(p2));
     }
 
+    /**
+     * Proverava da dve porudžbine nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Porudzbina p1 = new Porudzbina();
@@ -117,6 +165,9 @@ class PorudzbinaTest {
         assertFalse(p1.equals(p2));
     }
 
+    /**
+     * Proverava hashCode za porudžbine sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Porudzbina p1 = new Porudzbina();
@@ -128,6 +179,9 @@ class PorudzbinaTest {
         assertEquals(p1.hashCode(), p2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz porudžbine.
+     */
     @Test
     void testToString() {
         porudzbina.setId(1L);
@@ -140,7 +194,10 @@ class PorudzbinaTest {
         assertTrue(s.contains("5000.0"));
         assertTrue(s.contains("PLACENA"));
     }
-    
+
+    /**
+     * Proverava validaciju kada datum porudžbine nije postavljen.
+     */
     @Test
     void testDatumNotNull() {
 
@@ -154,7 +211,10 @@ class PorudzbinaTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("datum"))
         );
     }
-    
+
+    /**
+     * Proverava validaciju kada ukupan iznos porudžbine nije postavljen.
+     */
     @Test
     void testUkupanIznosNotNull() {
 
@@ -169,6 +229,9 @@ class PorudzbinaTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada ukupan iznos porudžbine nije pozitivan.
+     */
     @Test
     void testUkupanIznosPositive() {
 
@@ -182,7 +245,10 @@ class PorudzbinaTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("ukupanIznos"))
         );
     }
-    
+
+    /**
+     * Proverava validaciju kada je status porudžbine prazan.
+     */
     @Test
     void testStatusNotBlank() {
 
@@ -197,6 +263,9 @@ class PorudzbinaTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine statusa porudžbine.
+     */
     @Test
     void testStatusMaxSize() {
 
@@ -210,7 +279,10 @@ class PorudzbinaTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("status"))
         );
     }
-    
+
+    /**
+     * Proverava konstruktor sa identifikatorom, datumom, ukupnim iznosom i korisnikom.
+     */
     @Test
     void testPorudzbinaLongLocalDateTimeDoubleKorisnik() {
 

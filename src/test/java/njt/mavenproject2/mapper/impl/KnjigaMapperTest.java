@@ -3,7 +3,6 @@ package njt.mavenproject2.mapper.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -16,10 +15,25 @@ import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.entity.impl.Knjizara;
 import njt.mavenproject2.entity.impl.Zanr;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaMapper}.
+ *
+ * Testira konverziju između entiteta Knjiga i DTO objekta KnjigaDto,
+ * uključujući osnovne podatke o knjizi, žanr, autore i dostupnost
+ * knjige u knjižarama.
+ *
+ * @author Korisnik
+ */
 class KnjigaMapperTest {
 
+    /**
+     * Mapper koji se testira.
+     */
     private final KnjigaMapper mapper = new KnjigaMapper();
 
+    /**
+     * Proverava konverziju entiteta Knjiga u DTO objekat sa svim povezanim podacima.
+     */
     @Test
     void testToDo() {
         Zanr zanr = new Zanr();
@@ -85,11 +99,17 @@ class KnjigaMapperTest {
         assertEquals(5, dto.getDostupnost().get(0).kolicina);
     }
 
+    /**
+     * Proverava da konverzija null entiteta vraća null vrednost.
+     */
     @Test
     void testToDoNull() {
         assertNull(mapper.toDo(null));
     }
 
+    /**
+     * Proverava konverziju knjige bez žanra, autora i knjižare.
+     */
     @Test
     void testToDoBezZanraAutoraIKnjizare() {
         Knjiga knjiga = new Knjiga();
@@ -116,6 +136,9 @@ class KnjigaMapperTest {
         assertEquals(0, dto.getDostupnost().get(0).kolicina);
     }
 
+    /**
+     * Proverava konverziju knjige kada su liste autora i dostupnosti null.
+     */
     @Test
     void testToDoSaNullListama() {
         Knjiga knjiga = new Knjiga();
@@ -131,6 +154,9 @@ class KnjigaMapperTest {
         assertEquals(0, dto.getKolicina());
     }
 
+    /**
+     * Proverava konverziju DTO objekta KnjigaDto u entitet Knjiga.
+     */
     @Test
     void testToEntity() {
         KnjigaDto dto = new KnjigaDto();
@@ -156,6 +182,9 @@ class KnjigaMapperTest {
         assertNotNull(knjiga.getDostupnost());
     }
 
+    /**
+     * Proverava da konverzija null DTO objekta vraća null vrednost.
+     */
     @Test
     void testToEntityNull() {
         assertNull(mapper.toEntity(null));

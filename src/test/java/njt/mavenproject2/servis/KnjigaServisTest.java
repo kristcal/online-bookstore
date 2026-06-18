@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import njt.mavenproject2.dto.impl.KnjigaDto;
+import njt.mavenproject2.entity.impl.Autor;
 import njt.mavenproject2.entity.impl.Knjiga;
+import njt.mavenproject2.entity.impl.KnjigaKnjizara;
+import njt.mavenproject2.entity.impl.Knjizara;
 import njt.mavenproject2.entity.impl.Zanr;
 import njt.mavenproject2.mapper.impl.KnjigaMapper;
 import njt.mavenproject2.repository.impl.AutorRepository;
@@ -18,19 +21,50 @@ import njt.mavenproject2.repository.impl.ZanrRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import njt.mavenproject2.entity.impl.Autor;
-import njt.mavenproject2.entity.impl.Knjizara;
-import njt.mavenproject2.entity.impl.KnjigaKnjizara;
-
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaServis}.
+ *
+ * Testira pronalaženje, kreiranje, izmenu, brisanje i pretragu knjiga.
+ * Posebno proverava rad sa povezanim entitetima kao što su žanr,
+ * autori i dostupnost knjige u knjižarama.
+ *
+ * @author Korisnik
+ */
 class KnjigaServisTest {
 
+    /**
+     * Mock repozitorijum knjiga.
+     */
     private KnjigaRepository repo;
+
+    /**
+     * Mock repozitorijum žanrova.
+     */
     private ZanrRepository zanrRepo;
+
+    /**
+     * Mock repozitorijum autora.
+     */
     private AutorRepository autorRepo;
+
+    /**
+     * Mock repozitorijum knjižara.
+     */
     private KnjizaraRepository knjizaraRepo;
+
+    /**
+     * Mock mapper za konverziju knjiga.
+     */
     private KnjigaMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private KnjigaServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KnjigaRepository.class);
@@ -42,6 +76,9 @@ class KnjigaServisTest {
         servis = new KnjigaServis(repo, zanrRepo, mapper, autorRepo, knjizaraRepo);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih knjiga.
+     */
     @Test
     void testFindAll() {
         Knjiga k1 = new Knjiga();
@@ -75,6 +112,11 @@ class KnjigaServisTest {
         verify(mapper).toDo(k2);
     }
 
+    /**
+     * Proverava uspešno pronalaženje knjige prema identifikatoru.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         Knjiga k = new Knjiga();
@@ -98,6 +140,11 @@ class KnjigaServisTest {
         verify(mapper).toDo(k);
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma
+     */
     @Test
     void testFindByIdNePostoji() throws Exception {
         when(repo.findOneFull(999L)).thenThrow(new Exception("Knjiga nije pronađena!"));
@@ -110,7 +157,12 @@ class KnjigaServisTest {
         verify(repo).findOneFull(999L);
         verify(mapper, never()).toDo(any());
     }
-    
+
+    /**
+     * Proverava uspešno kreiranje knjige bez povezanih entiteta.
+     *
+     * @throws Exception ukoliko dođe do greške pri kreiranju
+     */
     @Test
     void testCreate() throws Exception {
 
@@ -144,7 +196,12 @@ class KnjigaServisTest {
         verify(repo).findOneFull(1L);
         verify(mapper).toDo(saved);
     }
-    
+
+    /**
+     * Proverava kreiranje knjige sa povezanim žanrom.
+     *
+     * @throws Exception ukoliko žanr ili knjiga nisu pronađeni
+     */
     @Test
     void testCreateSaZanrom() throws Exception {
 
@@ -180,7 +237,12 @@ class KnjigaServisTest {
         verify(zanrRepo).findById(5L);
         verify(repo).save(entity);
     }
-    
+
+    /**
+     * Proverava uspešno ažuriranje osnovnih podataka o knjizi.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testUpdate() throws Exception {
 
@@ -217,7 +279,10 @@ class KnjigaServisTest {
         verify(repo).save(existing);
         verify(repo).findOneFull(1L);
     }
-    
+
+    /**
+     * Proverava uspešno brisanje knjige prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
 
@@ -225,7 +290,10 @@ class KnjigaServisTest {
 
         verify(repo).deleteById(1L);
     }
-    
+
+    /**
+     * Proverava pronalaženje knjiga prema žanru.
+     */
     @Test
     void testFindByGenre() {
         Knjiga k = new Knjiga();
@@ -240,6 +308,9 @@ class KnjigaServisTest {
         verify(repo).findByGenre(1L);
     }
 
+    /**
+     * Proverava pronalaženje knjiga čija je cena manja od zadate vrednosti.
+     */
     @Test
     void testFindCheaperThan() {
         Knjiga k = new Knjiga();
@@ -254,6 +325,9 @@ class KnjigaServisTest {
         verify(repo).findCheaperThan(1000.0);
     }
 
+    /**
+     * Proverava pretragu knjiga prema tekstu, žanru i maksimalnoj ceni.
+     */
     @Test
     void testSearch() {
         Knjiga k = new Knjiga();
@@ -267,8 +341,12 @@ class KnjigaServisTest {
         assertEquals(1, rezultat.size());
         verify(repo).search("1984", 1L, 1000.0);
     }
-    
-    
+
+    /**
+     * Proverava kreiranje knjige sa autorima i dostupnošću u knjižari.
+     *
+     * @throws Exception ukoliko autor, knjižara ili knjiga nisu pronađeni
+     */
     @Test
     void testCreateSaAutorimaIDostupnoscu() throws Exception {
 
@@ -326,7 +404,12 @@ class KnjigaServisTest {
         verify(knjizaraRepo).findById(2L);
         verify(repo).save(entity);
     }
-    
+
+    /**
+     * Proverava ažuriranje knjige sa autorima i dostupnošću.
+     *
+     * @throws Exception ukoliko autor, knjižara ili knjiga nisu pronađeni
+     */
     @Test
     void testUpdateSaAutorimaIDostupnoscu() throws Exception {
 
@@ -387,7 +470,13 @@ class KnjigaServisTest {
         verify(knjizaraRepo).findById(2L);
         verify(repo).save(existing);
     }
-    
+
+    /**
+     * Proverava da se pri kreiranju preskaču autori i dostupnosti
+     * kod kojih nije prosleđen identifikator.
+     *
+     * @throws Exception ukoliko dođe do greške pri kreiranju
+     */
     @Test
     void testCreatePreskaceAutoreIDostupnostBezId() throws Exception {
 
@@ -427,7 +516,13 @@ class KnjigaServisTest {
         verify(knjizaraRepo, never()).findById(anyLong());
         verify(repo).save(entity);
     }
-    
+
+    /**
+     * Proverava da se pri ažuriranju preskaču autori i dostupnosti
+     * kod kojih nije prosleđen identifikator.
+     *
+     * @throws Exception ukoliko dođe do greške pri ažuriranju
+     */
     @Test
     void testUpdatePreskaceAutoreIDostupnostBezId() throws Exception {
 

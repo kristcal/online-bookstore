@@ -13,12 +13,33 @@ import njt.mavenproject2.repository.impl.ZanrRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link ZanrServis}.
+ *
+ * Testira pronalaženje, kreiranje, izmenu i brisanje žanrova.
+ *
+ * @author Korisnik
+ */
 class ZanrServisTest {
 
+    /**
+     * Mock repozitorijum žanrova.
+     */
     private ZanrRepository repo;
+
+    /**
+     * Mock mapper za konverziju žanrova.
+     */
     private ZanrMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private ZanrServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(ZanrRepository.class);
@@ -26,6 +47,9 @@ class ZanrServisTest {
         servis = new ZanrServis(repo, mapper);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih žanrova.
+     */
     @Test
     void testFindAll() {
         Zanr zanr = new Zanr();
@@ -41,6 +65,11 @@ class ZanrServisTest {
         verify(mapper).toDo(zanr);
     }
 
+    /**
+     * Proverava uspešno pronalaženje žanra prema identifikatoru.
+     *
+     * @throws Exception ukoliko žanr nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Zanr zanr = new Zanr();
@@ -59,6 +88,9 @@ class ZanrServisTest {
         verify(mapper).toDo(zanr);
     }
 
+    /**
+     * Proverava uspešno kreiranje žanra.
+     */
     @Test
     void testCreate() {
         ZanrDto dto = new ZanrDto();
@@ -81,6 +113,9 @@ class ZanrServisTest {
         verify(mapper).toDo(zanr);
     }
 
+    /**
+     * Proverava uspešno ažuriranje žanra.
+     */
     @Test
     void testUpdate() {
         ZanrDto dto = new ZanrDto();
@@ -101,11 +136,15 @@ class ZanrServisTest {
 
         assertEquals(1L, rezultat.getId());
         assertEquals("Drama", rezultat.getNaziv());
+
         verify(mapper).toEntity(dto);
         verify(repo).save(zanr);
         verify(mapper).toDo(zanr);
     }
 
+    /**
+     * Proverava uspešno brisanje žanra prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         servis.deleteById(1L);

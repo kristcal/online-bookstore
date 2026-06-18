@@ -10,17 +10,41 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AuthServis}.
+ *
+ * Testira različite scenarije prijave korisnika,
+ * uključujući uspešnu prijavu, pogrešne kredencijale,
+ * nepostojeći nalog i rad sa hashovanim lozinkama.
+ *
+ * @author Korisnik
+ */
 class AuthServisTest {
 
+    /**
+     * Mock repozitorijum korisnika.
+     */
     private KorisnikRepository repo;
+
+    /**
+     * Servis za autentifikaciju koji se testira.
+     */
     private AuthServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KorisnikRepository.class);
         servis = new AuthServis(repo);
     }
 
+    /**
+     * Proverava uspešnu prijavu korisnika sa običnom lozinkom.
+     *
+     * @throws Exception ukoliko dođe do greške tokom prijave
+     */
     @Test
     void testLoginUspehPlainText() throws Exception {
 
@@ -40,6 +64,9 @@ class AuthServisTest {
         verify(repo).findByEmail("test@test.com");
     }
 
+    /**
+     * Proverava ponašanje sistema kada korisnik ne postoji.
+     */
     @Test
     void testLoginKorisnikNePostoji() {
 
@@ -59,6 +86,9 @@ class AuthServisTest {
         verify(repo).findByEmail("nepostoji@test.com");
     }
 
+    /**
+     * Proverava ponašanje sistema kada je uneta pogrešna lozinka.
+     */
     @Test
     void testLoginPogresnaLozinka() {
 
@@ -80,6 +110,11 @@ class AuthServisTest {
                 e.getMessage());
     }
 
+    /**
+     * Proverava uspešnu prijavu korisnika sa hashovanom lozinkom.
+     *
+     * @throws Exception ukoliko dođe do greške tokom prijave
+     */
     @Test
     void testLoginHashovanaLozinka() throws Exception {
 
@@ -105,8 +140,11 @@ class AuthServisTest {
 
         verify(repo).findByEmail("test@test.com");
     }
-    
-    
+
+    /**
+     * Proverava ponašanje sistema kada je uneta pogrešna
+     * hashovana lozinka.
+     */
     @Test
     void testLoginPogresnaHashovanaLozinka() {
 
@@ -132,7 +170,11 @@ class AuthServisTest {
 
         verify(repo).findByEmail("test@test.com");
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada korisnik nema
+     * postavljenu lozinku.
+     */
     @Test
     void testLoginLozinkaUNaloguNull() {
 

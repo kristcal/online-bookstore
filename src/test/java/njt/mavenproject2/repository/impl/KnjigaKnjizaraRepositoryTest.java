@@ -14,11 +14,32 @@ import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaKnjizaraRepository}.
+ *
+ * Testira osnovne CRUD operacije nad vezom između knjige i knjižare,
+ * pronalaženje dostupnosti za određenu knjigu i zaključavanje redova
+ * prilikom izmene zaliha.
+ *
+ * @author Korisnik
+ */
 class KnjigaKnjizaraRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private KnjigaKnjizaraRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new KnjigaKnjizaraRepository();
@@ -29,6 +50,9 @@ class KnjigaKnjizaraRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih veza između knjiga i knjižara.
+     */
     @Test
     void testFindAll() {
         TypedQuery<KnjigaKnjizara> query = mock(TypedQuery.class);
@@ -42,6 +66,11 @@ class KnjigaKnjizaraRepositoryTest {
         assertEquals(1, rezultat.size());
     }
 
+    /**
+     * Proverava uspešno pronalaženje veze između knjige i knjižare prema identifikatoru.
+     *
+     * @throws Exception ukoliko veza nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -54,6 +83,9 @@ class KnjigaKnjizaraRepositoryTest {
         assertEquals(1L, rezultat.getId());
     }
 
+    /**
+     * Proverava ponašanje sistema kada veza između knjige i knjižare ne postoji.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(KnjigaKnjizara.class, 999L)).thenReturn(null);
@@ -64,6 +96,9 @@ class KnjigaKnjizaraRepositoryTest {
         assertEquals("Veza knjiga–knjižara nije pronađena!", e.getMessage());
     }
 
+    /**
+     * Proverava čuvanje nove veze između knjige i knjižare pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -74,6 +109,9 @@ class KnjigaKnjizaraRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojeće veze između knjige i knjižare pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -85,6 +123,9 @@ class KnjigaKnjizaraRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje veze između knjige i knjižare.
+     */
     @Test
     void testDeleteById() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -97,6 +138,9 @@ class KnjigaKnjizaraRepositoryTest {
         verify(entityManager).remove(kk);
     }
 
+    /**
+     * Proverava da se ne briše veza koja ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(KnjigaKnjizara.class, 999L)).thenReturn(null);
@@ -106,6 +150,9 @@ class KnjigaKnjizaraRepositoryTest {
         verify(entityManager, never()).remove(any());
     }
 
+    /**
+     * Proverava pronalaženje dostupnosti za određenu knjigu.
+     */
     @Test
     void testFindByKnjigaId() {
         TypedQuery<KnjigaKnjizara> query = mock(TypedQuery.class);
@@ -123,6 +170,9 @@ class KnjigaKnjizaraRepositoryTest {
         verify(query).setParameter("kid", 10L);
     }
 
+    /**
+     * Proverava pronalaženje dostupnosti knjige uz zaključavanje redova za izmenu.
+     */
     @Test
     void testFindByKnjigaIdForUpdate() {
         TypedQuery<KnjigaKnjizara> query = mock(TypedQuery.class);

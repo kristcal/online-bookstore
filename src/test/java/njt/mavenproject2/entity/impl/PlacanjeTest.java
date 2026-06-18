@@ -3,19 +3,33 @@ package njt.mavenproject2.entity.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Placanje}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class PlacanjeTest {
 
     private Placanje placanje;
     private Validator validator;
-    
+
+    /**
+     * Inicijalizuje objekat klase Placanje i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         placanje = new Placanje();
@@ -25,16 +39,25 @@ class PlacanjeTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         placanje = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Placanje.
+     */
     @Test
     void testPlacanje() {
         assertNotNull(placanje);
     }
 
+    /**
+     * Proverava konstruktor sa svim parametrima.
+     */
     @Test
     void testPlacanjeLongDoubleStringStringLocalDateTimeString() {
         LocalDateTime datum = LocalDateTime.of(2026, 6, 11, 17, 0);
@@ -49,30 +72,45 @@ class PlacanjeTest {
         assertEquals("2026-001", placanje.getPozivNaBroj());
     }
 
+    /**
+     * Proverava postavljanje identifikatora plaćanja.
+     */
     @Test
     void testSetId() {
         placanje.setId(1L);
         assertEquals(1L, placanje.getId());
     }
 
+    /**
+     * Proverava postavljanje iznosa plaćanja.
+     */
     @Test
     void testSetIznos() {
         placanje.setIznos(3000.0);
         assertEquals(3000.0, placanje.getIznos());
     }
 
+    /**
+     * Proverava postavljanje načina plaćanja.
+     */
     @Test
     void testSetNacinPlacanja() {
         placanje.setNacinPlacanja("Gotovina");
         assertEquals("Gotovina", placanje.getNacinPlacanja());
     }
 
+    /**
+     * Proverava postavljanje statusa plaćanja.
+     */
     @Test
     void testSetStatusPlacanja() {
         placanje.setStatusPlacanja("NA_CEKANJU");
         assertEquals("NA_CEKANJU", placanje.getStatusPlacanja());
     }
 
+    /**
+     * Proverava postavljanje datuma plaćanja.
+     */
     @Test
     void testSetDatumPlacanja() {
         LocalDateTime datum = LocalDateTime.now();
@@ -80,12 +118,18 @@ class PlacanjeTest {
         assertEquals(datum, placanje.getDatumPlacanja());
     }
 
+    /**
+     * Proverava postavljanje poziva na broj.
+     */
     @Test
     void testSetPozivNaBroj() {
         placanje.setPozivNaBroj("2026-002");
         assertEquals("2026-002", placanje.getPozivNaBroj());
     }
 
+    /**
+     * Proverava postavljanje porudžbine povezane sa plaćanjem.
+     */
     @Test
     void testSetPorudzbina() {
         Porudzbina porudzbina = new Porudzbina();
@@ -96,6 +140,9 @@ class PlacanjeTest {
         assertEquals(porudzbina, placanje.getPorudzbina());
     }
 
+    /**
+     * Proverava da su dva plaćanja jednaka kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Placanje p1 = new Placanje();
@@ -107,6 +154,9 @@ class PlacanjeTest {
         assertTrue(p1.equals(p2));
     }
 
+    /**
+     * Proverava da dva plaćanja nisu jednaka kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Placanje p1 = new Placanje();
@@ -118,18 +168,27 @@ class PlacanjeTest {
         assertFalse(p1.equals(p2));
     }
 
+    /**
+     * Proverava da plaćanje nije jednako null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         placanje.setId(1L);
         assertFalse(placanje.equals(null));
     }
 
+    /**
+     * Proverava da plaćanje nije jednako objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         placanje.setId(1L);
         assertFalse(placanje.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za plaćanja sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Placanje p1 = new Placanje();
@@ -141,6 +200,9 @@ class PlacanjeTest {
         assertEquals(p1.hashCode(), p2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz plaćanja.
+     */
     @Test
     void testToString() {
         placanje.setId(1L);
@@ -155,8 +217,10 @@ class PlacanjeTest {
         assertTrue(s.contains("Kartica"));
         assertTrue(s.contains("PLACENO"));
     }
-    
-    
+
+    /**
+     * Proverava validaciju kada iznos plaćanja nije postavljen.
+     */
     @Test
     void testIznosNotNull() {
 
@@ -171,6 +235,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada iznos plaćanja nije pozitivan.
+     */
     @Test
     void testIznosPositive() {
 
@@ -185,6 +252,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je način plaćanja prazan.
+     */
     @Test
     void testNacinPlacanjaNotBlank() {
 
@@ -199,6 +269,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine načina plaćanja.
+     */
     @Test
     void testNacinPlacanjaMaxSize() {
 
@@ -213,6 +286,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je status plaćanja prazan.
+     */
     @Test
     void testStatusPlacanjaNotBlank() {
 
@@ -227,6 +303,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine statusa plaćanja.
+     */
     @Test
     void testStatusPlacanjaMaxSize() {
 
@@ -241,6 +320,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada datum plaćanja nije postavljen.
+     */
     @Test
     void testDatumPlacanjaNotNull() {
 
@@ -255,6 +337,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je poziv na broj prazan.
+     */
     @Test
     void testPozivNaBrojNotBlank() {
 
@@ -269,6 +354,9 @@ class PlacanjeTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine poziva na broj.
+     */
     @Test
     void testPozivNaBrojMaxSize() {
 
@@ -282,5 +370,4 @@ class PlacanjeTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("pozivNaBroj"))
         );
     }
-    
 }

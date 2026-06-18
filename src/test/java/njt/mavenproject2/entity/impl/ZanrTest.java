@@ -4,18 +4,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.*;
 import java.util.Set;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Zanr}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class ZanrTest {
 
     private Zanr zanr;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase Zanr i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         zanr = new Zanr();
@@ -25,16 +40,25 @@ class ZanrTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         zanr = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Zanr.
+     */
     @Test
     void testZanr() {
         assertNotNull(zanr);
     }
 
+    /**
+     * Proverava konstruktor sa identifikatorom i nazivom žanra.
+     */
     @Test
     void testZanrLongString() {
         zanr = new Zanr(1L, "Roman");
@@ -43,18 +67,27 @@ class ZanrTest {
         assertEquals("Roman", zanr.getNaziv());
     }
 
+    /**
+     * Proverava postavljanje identifikatora žanra.
+     */
     @Test
     void testSetId() {
         zanr.setId(1L);
         assertEquals(1L, zanr.getId());
     }
 
+    /**
+     * Proverava postavljanje naziva žanra.
+     */
     @Test
     void testSetNaziv() {
         zanr.setNaziv("Drama");
         assertEquals("Drama", zanr.getNaziv());
     }
 
+    /**
+     * Proverava postavljanje liste knjiga koje pripadaju žanru.
+     */
     @Test
     void testSetKnjige() {
         Knjiga k = new Knjiga();
@@ -67,6 +100,9 @@ class ZanrTest {
         assertEquals(1, zanr.getKnjige().size());
     }
 
+    /**
+     * Proverava da su dva žanra jednaka kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Zanr z1 = new Zanr();
@@ -78,6 +114,9 @@ class ZanrTest {
         assertTrue(z1.equals(z2));
     }
 
+    /**
+     * Proverava da dva žanra nisu jednaka kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Zanr z1 = new Zanr();
@@ -89,6 +128,9 @@ class ZanrTest {
         assertFalse(z1.equals(z2));
     }
 
+    /**
+     * Proverava hashCode za žanrove sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Zanr z1 = new Zanr();
@@ -100,6 +142,9 @@ class ZanrTest {
         assertEquals(z1.hashCode(), z2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz žanra.
+     */
     @Test
     void testToString() {
         zanr.setId(1L);
@@ -110,7 +155,10 @@ class ZanrTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("Roman"));
     }
-    
+
+    /**
+     * Proverava validaciju kada je naziv žanra prazan.
+     */
     @Test
     void testNazivNotBlank() {
 
@@ -125,6 +173,9 @@ class ZanrTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine naziva žanra.
+     */
     @Test
     void testNazivMaxSize() {
 

@@ -13,17 +13,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KorisnikController}.
+ *
+ * Testira dobavljanje svih korisnika, dobavljanje korisnika po identifikatoru,
+ * kreiranje, izmenu, brisanje i obradu izuzetaka.
+ *
+ * @author Korisnik
+ */
 class KorisnikControllerTest {
 
     private KorisnikServis service;
     private KorisnikController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         service = mock(KorisnikServis.class);
         controller = new KorisnikController(service);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih korisnika.
+     */
     @Test
     void testGetAll() {
         KorisnikDto k1 =
@@ -43,6 +57,11 @@ class KorisnikControllerTest {
         verify(service).findAll();
     }
 
+    /**
+     * Proverava uspešno dobavljanje korisnika prema identifikatoru.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetById() throws Exception {
         KorisnikDto dto =
@@ -59,6 +78,11 @@ class KorisnikControllerTest {
         verify(service).findById(1L);
     }
 
+    /**
+     * Proverava obradu izuzetka kada korisnik sa zadatim identifikatorom ne postoji.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetByIdException() throws Exception {
         when(service.findById(999L))
@@ -72,6 +96,9 @@ class KorisnikControllerTest {
         assertEquals("Korisnik nije pronađen!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno kreiranje novog korisnika.
+     */
     @Test
     void testCreate() {
         KorisnikDto dto =
@@ -91,6 +118,11 @@ class KorisnikControllerTest {
         verify(service).create(dto);
     }
 
+    /**
+     * Proverava uspešnu izmenu postojećeg korisnika.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdate() throws Exception {
         KorisnikDto dto =
@@ -110,6 +142,11 @@ class KorisnikControllerTest {
         verify(service).update(1L, dto);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom izmene korisnika koji ne postoji.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdateException() throws Exception {
         KorisnikDto dto =
@@ -126,6 +163,9 @@ class KorisnikControllerTest {
         assertEquals("Korisnik nije pronađen!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno brisanje korisnika.
+     */
     @Test
     void testDelete() {
         ResponseEntity<String> response =

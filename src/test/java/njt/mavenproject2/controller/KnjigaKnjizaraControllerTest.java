@@ -14,17 +14,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaKnjizaraController}.
+ *
+ * Testira dobavljanje ponude za knjigu, dodavanje knjige u knjižaru,
+ * izmenu količine, obradu izuzetaka i uklanjanje veze knjiga-knjižara.
+ *
+ * @author Korisnik
+ */
 class KnjigaKnjizaraControllerTest {
 
     private KnjigaKnjizaraServis servis;
     private KnjigaKnjizaraController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         servis = mock(KnjigaKnjizaraServis.class);
         controller = new KnjigaKnjizaraController(servis);
     }
 
+    /**
+     * Proverava uspešno dobavljanje ponude za zadatu knjigu.
+     */
     @Test
     void testList() {
         KnjigaKnjizaraDto dto = new KnjigaKnjizaraDto(1L, 2L, 10);
@@ -41,6 +55,11 @@ class KnjigaKnjizaraControllerTest {
         verify(servis).listForKnjiga(10L);
     }
 
+    /**
+     * Proverava uspešno dodavanje knjige u ponudu knjižare.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAdd() throws Exception {
         KnjigaKnjizaraDto dto = new KnjigaKnjizaraDto(null, 2L, 10);
@@ -57,6 +76,11 @@ class KnjigaKnjizaraControllerTest {
         verify(servis).addOrSet(10L, dto);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom dodavanja knjige u ponudu knjižare.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testAddException() throws Exception {
         KnjigaKnjizaraDto dto = new KnjigaKnjizaraDto(null, 2L, 10);
@@ -72,6 +96,11 @@ class KnjigaKnjizaraControllerTest {
         assertEquals("Knjizara nije pronađena!", e.getReason());
     }
 
+    /**
+     * Proverava uspešnu izmenu količine knjige u knjižari.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdateQty() throws Exception {
         KnjigaKnjizaraDto updated = new KnjigaKnjizaraDto(1L, 2L, 20);
@@ -87,6 +116,11 @@ class KnjigaKnjizaraControllerTest {
         verify(servis).updateKolicina(1L, 20);
     }
 
+    /**
+     * Proverava obradu izuzetka prilikom izmene količine knjige u knjižari.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdateQtyException() throws Exception {
         when(servis.updateKolicina(1L, 20))
@@ -100,6 +134,9 @@ class KnjigaKnjizaraControllerTest {
         assertEquals("Veza nije pronađena!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno uklanjanje knjige iz ponude knjižare.
+     */
     @Test
     void testRemove() {
         ResponseEntity<Void> response =

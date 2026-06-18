@@ -7,10 +7,24 @@ import org.junit.jupiter.api.Test;
 import njt.mavenproject2.dto.impl.AutorDto;
 import njt.mavenproject2.entity.impl.Autor;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AutorMapper}.
+ *
+ * Testira konverziju između entiteta Autor i DTO objekta AutorDto,
+ * kao i ponašanje mapper-a kada je prosleđena null vrednost.
+ *
+ * @author Korisnik
+ */
 class AutorMapperTest {
 
+    /**
+     * Mapper koji se testira.
+     */
     private final AutorMapper mapper = new AutorMapper();
 
+    /**
+     * Proverava konverziju entiteta Autor u DTO objekat.
+     */
     @Test
     void testToDo() {
 
@@ -27,11 +41,17 @@ class AutorMapperTest {
         assertEquals("Andric", dto.getPrezime());
     }
 
+    /**
+     * Proverava da konverzija null entiteta vraća null vrednost.
+     */
     @Test
     void testToDoNull() {
         assertNull(mapper.toDo(null));
     }
 
+    /**
+     * Proverava konverziju DTO objekta AutorDto u entitet Autor.
+     */
     @Test
     void testToEntity() {
 
@@ -45,6 +65,9 @@ class AutorMapperTest {
         assertEquals("Andric", autor.getPrezime());
     }
 
+    /**
+     * Proverava da konverzija null DTO objekta vraća null vrednost.
+     */
     @Test
     void testToEntityNull() {
         assertNull(mapper.toEntity(null));

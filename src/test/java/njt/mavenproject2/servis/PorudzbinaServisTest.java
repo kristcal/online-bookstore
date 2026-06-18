@@ -7,8 +7,10 @@ import java.util.List;
 
 import njt.mavenproject2.dto.impl.PorudzbinaDto;
 import njt.mavenproject2.entity.impl.Knjiga;
+import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.entity.impl.Korisnik;
 import njt.mavenproject2.entity.impl.Porudzbina;
+import njt.mavenproject2.entity.impl.StavkaPorudzbine;
 import njt.mavenproject2.mapper.impl.PorudzbinaMapper;
 import njt.mavenproject2.repository.impl.KnjigaKnjizaraRepository;
 import njt.mavenproject2.repository.impl.KnjigaRepository;
@@ -18,18 +20,51 @@ import njt.mavenproject2.repository.impl.PorudzbinaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import njt.mavenproject2.entity.impl.StavkaPorudzbine;
-import njt.mavenproject2.entity.impl.KnjigaKnjizara;
-
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link PorudzbinaServis}.
+ *
+ * Testira pronalaženje, kreiranje, izmenu, brisanje i promenu statusa
+ * porudžbina. Posebno proverava obračun ukupnog iznosa porudžbine,
+ * rad sa stavkama, proveru dostupnosti knjiga i skidanje zaliha prilikom
+ * obrade porudžbine.
+ *
+ * @author Korisnik
+ */
 class PorudzbinaServisTest {
 
+    /**
+     * Mock repozitorijum porudžbina.
+     */
     private PorudzbinaRepository repo;
+
+    /**
+     * Mock repozitorijum korisnika.
+     */
     private KorisnikRepository korisnikRepo;
+
+    /**
+     * Mock repozitorijum knjiga.
+     */
     private KnjigaRepository knjigaRepo;
+
+    /**
+     * Mock mapper za konverziju porudžbina.
+     */
     private PorudzbinaMapper mapper;
+
+    /**
+     * Mock repozitorijum dostupnosti knjiga u knjižarama.
+     */
     private KnjigaKnjizaraRepository kkRepo;
+
+    /**
+     * Servis koji se testira.
+     */
     private PorudzbinaServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(PorudzbinaRepository.class);
@@ -41,6 +76,9 @@ class PorudzbinaServisTest {
         servis = new PorudzbinaServis(repo, korisnikRepo, knjigaRepo, mapper, kkRepo);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih porudžbina.
+     */
     @Test
     void testFindAll() {
         Porudzbina p1 = new Porudzbina();
@@ -70,6 +108,11 @@ class PorudzbinaServisTest {
         verify(mapper).toDo(p2);
     }
 
+    /**
+     * Proverava uspešno pronalaženje porudžbine prema identifikatoru.
+     *
+     * @throws Exception ukoliko porudžbina nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         Porudzbina p = new Porudzbina();
@@ -90,6 +133,11 @@ class PorudzbinaServisTest {
         verify(mapper).toDo(p);
     }
 
+    /**
+     * Proverava ponašanje sistema kada porudžbina ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma
+     */
     @Test
     void testFindByIdNePostoji() throws Exception {
         when(repo.findById(999L)).thenThrow(new Exception("Porudžbina nije pronađena!"));
@@ -103,6 +151,9 @@ class PorudzbinaServisTest {
         verify(mapper, never()).toDo(any());
     }
 
+    /**
+     * Proverava pronalaženje porudžbina određenog korisnika.
+     */
     @Test
     void testFindByKorisnik() {
         Porudzbina p = new Porudzbina();
@@ -123,16 +174,23 @@ class PorudzbinaServisTest {
         verify(mapper).toDo(p);
     }
 
+    /**
+     * Proverava uspešno brisanje porudžbine.
+     */
     @Test
     void testDeleteById() {
         servis.deleteById(1L);
 
         verify(repo).deleteById(1L);
     }
-    
+
+    /**
+     * Proverava uspešno kreiranje porudžbine.
+     *
+     * @throws Exception ukoliko korisnik ili knjiga nisu pronađeni
+     */
     @Test
     void testCreate() throws Exception {
-
         Korisnik korisnik = new Korisnik();
         korisnik.setId(1L);
 
@@ -168,10 +226,13 @@ class PorudzbinaServisTest {
         verify(repo).save(any(Porudzbina.class));
         verify(mapper).toDo(any(Porudzbina.class));
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada se kreira porudžbina bez korisnika
+     * ili bez stavki.
+     */
     @Test
     void testCreateBezKorisnika() {
-
         PorudzbinaDto dto = new PorudzbinaDto();
 
         IllegalArgumentException e = assertThrows(
@@ -182,10 +243,14 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava uspešnu promenu statusa porudžbine.
+     *
+     * @throws Exception ukoliko promena statusa nije moguća
+     */
     @Test
     void testPromeniStatus() throws Exception {
-
         Porudzbina p = new Porudzbina();
         p.setId(1L);
         p.setStatus("KREIRANA");
@@ -205,10 +270,14 @@ class PorudzbinaServisTest {
         verify(repo).save(p);
         verify(mapper).toDo(p);
     }
-    
+
+    /**
+     * Proverava da se već obrađena porudžbina ne obrađuje ponovo.
+     *
+     * @throws Exception ukoliko dođe do greške pri promeni statusa
+     */
     @Test
     void testPromeniStatusVecObradjena() throws Exception {
-
         Porudzbina p = new Porudzbina();
         p.setId(1L);
         p.setStatus("OBRADJENA");
@@ -224,16 +293,17 @@ class PorudzbinaServisTest {
         assertNotNull(rezultat);
 
         verify(repo).findById(1L);
-
-        // ne sme da radi save jer je već obrađena
         verify(repo, never()).save(any());
-
         verify(mapper).toDo(p);
     }
-    
+
+    /**
+     * Proverava uspešno ažuriranje porudžbine.
+     *
+     * @throws Exception ukoliko porudžbina, korisnik ili knjiga nisu pronađeni
+     */
     @Test
     void testUpdate() throws Exception {
-
         Korisnik korisnik = new Korisnik();
         korisnik.setId(2L);
 
@@ -270,10 +340,14 @@ class PorudzbinaServisTest {
         verify(repo).save(postojeca);
         verify(mapper).toDo(postojeca);
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada porudžbina za ažuriranje ne postoji.
+     *
+     * @throws Exception očekivani izuzetak iz repozitorijuma
+     */
     @Test
     void testUpdateNePostoji() throws Exception {
-
         when(repo.findById(999L))
                 .thenThrow(new Exception("Porudžbina ne postoji"));
 
@@ -286,10 +360,14 @@ class PorudzbinaServisTest {
         verify(repo).findById(999L);
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada korisnik pri kreiranju ne postoji.
+     *
+     * @throws Exception ukoliko korisnik nije pronađen
+     */
     @Test
     void testCreateKorisnikNePostoji() throws Exception {
-
         PorudzbinaDto.Stavka stavka = new PorudzbinaDto.Stavka();
         stavka.setKnjigaId(10L);
         stavka.setKolicina(1);
@@ -308,10 +386,14 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada knjiga pri kreiranju ne postoji.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testCreateKnjigaNePostoji() throws Exception {
-
         Korisnik korisnik = new Korisnik();
         korisnik.setId(1L);
 
@@ -334,9 +416,14 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
+
+    /**
+     * Proverava ponašanje sistema kada korisnik pri ažuriranju ne postoji.
+     *
+     * @throws Exception ukoliko korisnik nije pronađen
+     */
     @Test
     void testUpdateKorisnikNePostoji() throws Exception {
-
         Porudzbina p = new Porudzbina();
         p.setId(1L);
 
@@ -353,10 +440,14 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada knjiga pri ažuriranju ne postoji.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testUpdateKnjigaNePostoji() throws Exception {
-
         Porudzbina p = new Porudzbina();
         p.setId(1L);
 
@@ -378,10 +469,14 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava skidanje zaliha kada se status porudžbine promeni u OBRADJENA.
+     *
+     * @throws Exception ukoliko nema dovoljno zaliha
+     */
     @Test
     void testPromeniStatusSkidaZalihe() throws Exception {
-
         Knjiga knjiga = new Knjiga();
         knjiga.setId(10L);
         knjiga.setNaziv("1984");
@@ -414,10 +509,14 @@ class PorudzbinaServisTest {
         verify(kkRepo).save(kk);
         verify(repo).save(p);
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada nema dovoljno knjiga na stanju.
+     *
+     * @throws Exception očekivani izuzetak zbog nedovoljnih zaliha
+     */
     @Test
     void testPromeniStatusNemaDovoljnoNaStanju() throws Exception {
-
         Knjiga knjiga = new Knjiga();
         knjiga.setId(10L);
         knjiga.setNaziv("1984");
@@ -444,7 +543,13 @@ class PorudzbinaServisTest {
 
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava da se pri kreiranju koriste podrazumevane vrednosti za
+     * količinu i cenu ako nisu prosleđene.
+     *
+     * @throws Exception ukoliko dođe do greške pri kreiranju
+     */
     @Test
     void testCreateDefaultKolicinaICena() throws Exception {
         Korisnik korisnik = new Korisnik();
@@ -475,7 +580,12 @@ class PorudzbinaServisTest {
                 && p.getUkupanIznos().equals(800.0)
         ));
     }
-    
+
+    /**
+     * Proverava ponašanje sistema kada repozitorijum vrati null za porudžbinu.
+     *
+     * @throws Exception očekivani izuzetak zbog nepostojeće porudžbine
+     */
     @Test
     void testUpdateRepoVratiNull() throws Exception {
         when(repo.findById(1L)).thenReturn(null);
@@ -486,7 +596,13 @@ class PorudzbinaServisTest {
         assertEquals("Porudžbina ne postoji", e.getMessage());
         verify(repo, never()).save(any());
     }
-    
+
+    /**
+     * Proverava da se pri ažuriranju koriste podrazumevane vrednosti za
+     * količinu i cenu ako nisu prosleđene.
+     *
+     * @throws Exception ukoliko dođe do greške pri ažuriranju
+     */
     @Test
     void testUpdateDefaultKolicinaICena() throws Exception {
         Porudzbina p = new Porudzbina();
@@ -514,7 +630,12 @@ class PorudzbinaServisTest {
         assertEquals(700.0, p.getStavke().get(0).getCenaK());
         assertEquals(700.0, p.getUkupanIznos());
     }
-    
+
+    /**
+     * Proverava da se zalihe ne skidaju kada status nije OBRADJENA.
+     *
+     * @throws Exception ukoliko dođe do greške pri promeni statusa
+     */
     @Test
     void testPromeniStatusNaOtkazanaNeSkidaZalihe() throws Exception {
         Porudzbina p = new Porudzbina();
@@ -530,7 +651,12 @@ class PorudzbinaServisTest {
         verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
         verify(repo).save(p);
     }
-    
+
+    /**
+     * Proverava da se pri skidanju zaliha preskače stavka bez knjige.
+     *
+     * @throws Exception ukoliko dođe do greške pri promeni statusa
+     */
     @Test
     void testPromeniStatusPreskaceStavkuBezKnjige() throws Exception {
         StavkaPorudzbine stavka = new StavkaPorudzbine();
@@ -550,7 +676,12 @@ class PorudzbinaServisTest {
         verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
         verify(repo).save(p);
     }
-    
+
+    /**
+     * Proverava da se pri skidanju zaliha preskače stavka sa nultom količinom.
+     *
+     * @throws Exception ukoliko dođe do greške pri promeni statusa
+     */
     @Test
     void testPromeniStatusPreskaceStavkuSaNultomKolicinom() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -573,7 +704,13 @@ class PorudzbinaServisTest {
         verify(kkRepo, never()).findByKnjigaIdForUpdate(anyLong());
         verify(repo).save(p);
     }
-    
+
+    /**
+     * Proverava da se zaliha sa nula knjiga na stanju preskače
+     * i da se baca greška ako nema dovoljno zaliha.
+     *
+     * @throws Exception očekivani izuzetak zbog nedovoljnih zaliha
+     */
     @Test
     void testPromeniStatusPreskaceZalihuSaNulaNaStanju() throws Exception {
         Knjiga knjiga = new Knjiga();

@@ -2,20 +2,33 @@ package njt.mavenproject2.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link KnjigaKnjizara}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class KnjigaKnjizaraTest {
 
     private KnjigaKnjizara knjigaKnjizara;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase KnjigaKnjizara i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         knjigaKnjizara = new KnjigaKnjizara();
@@ -25,16 +38,25 @@ class KnjigaKnjizaraTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         knjigaKnjizara = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase KnjigaKnjizara.
+     */
     @Test
     void testKnjigaKnjizara() {
         assertNotNull(knjigaKnjizara);
     }
 
+    /**
+     * Proverava konstruktor sa knjigom, knjižarom i količinom.
+     */
     @Test
     void testKnjigaKnjizaraKnjigaKnjizaraInteger() {
         Knjiga knjiga = new Knjiga();
@@ -47,12 +69,18 @@ class KnjigaKnjizaraTest {
         assertEquals(10, knjigaKnjizara.getKolicina());
     }
 
+    /**
+     * Proverava postavljanje identifikatora veze knjiga-knjižara.
+     */
     @Test
     void testSetId() {
         knjigaKnjizara.setId(1L);
         assertEquals(1L, knjigaKnjizara.getId());
     }
 
+    /**
+     * Proverava postavljanje knjige.
+     */
     @Test
     void testSetKnjiga() {
         Knjiga knjiga = new Knjiga();
@@ -62,6 +90,9 @@ class KnjigaKnjizaraTest {
         assertEquals(knjiga, knjigaKnjizara.getKnjiga());
     }
 
+    /**
+     * Proverava postavljanje knjižare.
+     */
     @Test
     void testSetKnjizara() {
         Knjizara knjizara = new Knjizara();
@@ -71,12 +102,18 @@ class KnjigaKnjizaraTest {
         assertEquals(knjizara, knjigaKnjizara.getKnjizara());
     }
 
+    /**
+     * Proverava postavljanje količine knjige u knjižari.
+     */
     @Test
     void testSetKolicina() {
         knjigaKnjizara.setKolicina(5);
         assertEquals(5, knjigaKnjizara.getKolicina());
     }
 
+    /**
+     * Proverava da su dve veze knjiga-knjižara jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         KnjigaKnjizara kk1 = new KnjigaKnjizara();
@@ -88,6 +125,9 @@ class KnjigaKnjizaraTest {
         assertTrue(kk1.equals(kk2));
     }
 
+    /**
+     * Proverava da dve veze knjiga-knjižara nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         KnjigaKnjizara kk1 = new KnjigaKnjizara();
@@ -99,18 +139,27 @@ class KnjigaKnjizaraTest {
         assertFalse(kk1.equals(kk2));
     }
 
+    /**
+     * Proverava da veza knjiga-knjižara nije jednaka null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         knjigaKnjizara.setId(1L);
         assertFalse(knjigaKnjizara.equals(null));
     }
 
+    /**
+     * Proverava da veza knjiga-knjižara nije jednaka objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         knjigaKnjizara.setId(1L);
         assertFalse(knjigaKnjizara.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za veze knjiga-knjižara sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         KnjigaKnjizara kk1 = new KnjigaKnjizara();
@@ -122,6 +171,9 @@ class KnjigaKnjizaraTest {
         assertEquals(kk1.hashCode(), kk2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz veze knjiga-knjižara.
+     */
     @Test
     void testToString() {
         knjigaKnjizara.setId(1L);
@@ -132,7 +184,10 @@ class KnjigaKnjizaraTest {
         assertTrue(s.contains("1"));
         assertTrue(s.contains("10"));
     }
-    
+
+    /**
+     * Proverava validaciju kada količina nije postavljena.
+     */
     @Test
     void testKolicinaNotNull() {
 
@@ -147,6 +202,9 @@ class KnjigaKnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je količina manja od nule.
+     */
     @Test
     void testKolicinaPositiveOrZero() {
 

@@ -4,20 +4,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link Knjizara}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class KnjizaraTest {
 
     private Knjizara knjizara;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase Knjizara i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         knjizara = new Knjizara();
@@ -27,16 +40,25 @@ class KnjizaraTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         knjizara = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase Knjizara.
+     */
     @Test
     void testKnjizara() {
         assertNotNull(knjizara);
     }
 
+    /**
+     * Proverava konstruktor sa svim parametrima.
+     */
     @Test
     void testKnjizaraLongStringStringString() {
         knjizara = new Knjizara(1L, "Laguna", "Beograd", "011123456");
@@ -47,30 +69,45 @@ class KnjizaraTest {
         assertEquals("011123456", knjizara.getKontakt());
     }
 
+    /**
+     * Proverava postavljanje identifikatora knjižare.
+     */
     @Test
     void testSetId() {
         knjizara.setId(1L);
         assertEquals(1L, knjizara.getId());
     }
 
+    /**
+     * Proverava postavljanje naziva knjižare.
+     */
     @Test
     void testSetNaziv() {
         knjizara.setNaziv("Vulkan");
         assertEquals("Vulkan", knjizara.getNaziv());
     }
 
+    /**
+     * Proverava postavljanje lokacije knjižare.
+     */
     @Test
     void testSetLokacija() {
         knjizara.setLokacija("Novi Sad");
         assertEquals("Novi Sad", knjizara.getLokacija());
     }
 
+    /**
+     * Proverava postavljanje kontakta knjižare.
+     */
     @Test
     void testSetKontakt() {
         knjizara.setKontakt("021123456");
         assertEquals("021123456", knjizara.getKontakt());
     }
 
+    /**
+     * Proverava postavljanje ponude knjižare.
+     */
     @Test
     void testSetPonuda() {
         KnjigaKnjizara kk = new KnjigaKnjizara();
@@ -84,6 +121,9 @@ class KnjizaraTest {
         assertTrue(knjizara.getPonuda().contains(kk));
     }
 
+    /**
+     * Proverava da su dve knjižare jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         Knjizara k1 = new Knjizara();
@@ -95,6 +135,9 @@ class KnjizaraTest {
         assertTrue(k1.equals(k2));
     }
 
+    /**
+     * Proverava da dve knjižare nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         Knjizara k1 = new Knjizara();
@@ -106,18 +149,27 @@ class KnjizaraTest {
         assertFalse(k1.equals(k2));
     }
 
+    /**
+     * Proverava da knjižara nije jednaka null vrednosti.
+     */
     @Test
     void testEqualsNull() {
         knjizara.setId(1L);
         assertFalse(knjizara.equals(null));
     }
 
+    /**
+     * Proverava da knjižara nije jednaka objektu druge klase.
+     */
     @Test
     void testEqualsDrugaKlasa() {
         knjizara.setId(1L);
         assertFalse(knjizara.equals("tekst"));
     }
 
+    /**
+     * Proverava hashCode za knjižare sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         Knjizara k1 = new Knjizara();
@@ -129,6 +181,9 @@ class KnjizaraTest {
         assertEquals(k1.hashCode(), k2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz knjižare.
+     */
     @Test
     void testToString() {
         knjizara = new Knjizara(1L, "Laguna", "Beograd", "011123456");
@@ -139,7 +194,10 @@ class KnjizaraTest {
         assertTrue(s.contains("Laguna"));
         assertTrue(s.contains("Beograd"));
     }
-    
+
+    /**
+     * Proverava validaciju kada je naziv knjižare prazan.
+     */
     @Test
     void testNazivNotBlank() {
 
@@ -154,6 +212,9 @@ class KnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine naziva knjižare.
+     */
     @Test
     void testNazivMaxSize() {
 
@@ -168,6 +229,9 @@ class KnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je lokacija knjižare prazna.
+     */
     @Test
     void testLokacijaNotBlank() {
 
@@ -182,6 +246,9 @@ class KnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine lokacije knjižare.
+     */
     @Test
     void testLokacijaMaxSize() {
 
@@ -196,6 +263,9 @@ class KnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada je kontakt knjižare prazan.
+     */
     @Test
     void testKontaktNotBlank() {
 
@@ -210,6 +280,9 @@ class KnjizaraTest {
         );
     }
 
+    /**
+     * Proverava validaciju maksimalne dužine kontakta knjižare.
+     */
     @Test
     void testKontaktMaxSize() {
 

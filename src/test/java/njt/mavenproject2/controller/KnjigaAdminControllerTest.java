@@ -10,17 +10,33 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaAdminController}.
+ *
+ * Testira kreiranje, izmenu i brisanje knjiga preko administrativnih
+ * operacija kontrolera.
+ *
+ * @author Korisnik
+ */
 class KnjigaAdminControllerTest {
 
     private KnjigaServis servis;
     private KnjigaAdminController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         servis = mock(KnjigaServis.class);
         controller = new KnjigaAdminController(servis);
     }
 
+    /**
+     * Proverava uspešno kreiranje nove knjige.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testCreate() throws Exception {
         KnjigaDto dto = new KnjigaDto();
@@ -39,6 +55,11 @@ class KnjigaAdminControllerTest {
         verify(servis).create(dto);
     }
 
+    /**
+     * Proverava uspešnu izmenu postojeće knjige.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdate() throws Exception {
         KnjigaDto dto = new KnjigaDto();
@@ -57,6 +78,9 @@ class KnjigaAdminControllerTest {
         verify(servis).update(1L, dto);
     }
 
+    /**
+     * Proverava uspešno brisanje knjige.
+     */
     @Test
     void testDelete() {
         ResponseEntity<Void> response = controller.delete(1L);

@@ -2,18 +2,33 @@ package njt.mavenproject2.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.*;
 import java.util.Set;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+/**
+ * Test klasa za proveru funkcionalnosti entiteta {@link StavkaPorudzbine}.
+ *
+ * Testira konstruktore, gettere, settere, metode equals, hashCode,
+ * toString i validaciona ograničenja definisana nad atributima klase.
+ *
+ * @author Korisnik
+ */
 class StavkaPorudzbineTest {
 
     private StavkaPorudzbine stavka;
     private Validator validator;
 
+    /**
+     * Inicijalizuje objekat klase StavkaPorudzbine i validator pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         stavka = new StavkaPorudzbine();
@@ -23,16 +38,25 @@ class StavkaPorudzbineTest {
         validator = factory.getValidator();
     }
 
+    /**
+     * Oslobađa referencu na objekat nakon svakog testa.
+     */
     @AfterEach
     void tearDown() {
         stavka = null;
     }
 
+    /**
+     * Proverava kreiranje praznog objekta klase StavkaPorudzbine.
+     */
     @Test
     void testStavkaPorudzbine() {
         assertNotNull(stavka);
     }
 
+    /**
+     * Proverava konstruktor sa rednim brojem, količinom, cenom, porudžbinom i knjigom.
+     */
     @Test
     void testKonstruktor() {
         Porudzbina p = new Porudzbina();
@@ -52,36 +76,54 @@ class StavkaPorudzbineTest {
         assertEquals(2000.0, stavka.getUkupanIznosStavke());
     }
 
+    /**
+     * Proverava postavljanje identifikatora stavke porudžbine.
+     */
     @Test
     void testSetId() {
         stavka.setId(1L);
         assertEquals(1L, stavka.getId());
     }
 
+    /**
+     * Proverava postavljanje rednog broja stavke.
+     */
     @Test
     void testSetRb() {
         stavka.setRb(2);
         assertEquals(2, stavka.getRb());
     }
 
+    /**
+     * Proverava postavljanje količine.
+     */
     @Test
     void testSetKolicina() {
         stavka.setKolicina(5);
         assertEquals(5, stavka.getKolicina());
     }
 
+    /**
+     * Proverava postavljanje cene knjige u okviru stavke.
+     */
     @Test
     void testSetCenaK() {
         stavka.setCenaK(1200.0);
         assertEquals(1200.0, stavka.getCenaK());
     }
 
+    /**
+     * Proverava postavljanje ukupnog iznosa stavke porudžbine.
+     */
     @Test
     void testSetUkupanIznosStavke() {
         stavka.setUkupanIznosStavke(6000.0);
         assertEquals(6000.0, stavka.getUkupanIznosStavke());
     }
 
+    /**
+     * Proverava postavljanje porudžbine kojoj stavka pripada.
+     */
     @Test
     void testSetPorudzbina() {
         Porudzbina p = new Porudzbina();
@@ -91,6 +133,9 @@ class StavkaPorudzbineTest {
         assertEquals(p, stavka.getPorudzbina());
     }
 
+    /**
+     * Proverava postavljanje knjige koja se nalazi u stavci.
+     */
     @Test
     void testSetKnjiga() {
         Knjiga k = new Knjiga();
@@ -100,6 +145,9 @@ class StavkaPorudzbineTest {
         assertEquals(k, stavka.getKnjiga());
     }
 
+    /**
+     * Proverava da su dve stavke porudžbine jednake kada imaju isti identifikator.
+     */
     @Test
     void testEqualsObject() {
         StavkaPorudzbine s1 = new StavkaPorudzbine();
@@ -111,6 +159,9 @@ class StavkaPorudzbineTest {
         assertTrue(s1.equals(s2));
     }
 
+    /**
+     * Proverava da dve stavke porudžbine nisu jednake kada imaju različite identifikatore.
+     */
     @Test
     void testEqualsObjectFalse() {
         StavkaPorudzbine s1 = new StavkaPorudzbine();
@@ -121,6 +172,10 @@ class StavkaPorudzbineTest {
 
         assertFalse(s1.equals(s2));
     }
+
+    /**
+     * Proverava da je stavka porudžbine jednaka samoj sebi.
+     */
     @Test
     void testEqualsSameObject() {
 
@@ -128,6 +183,10 @@ class StavkaPorudzbineTest {
 
         assertTrue(s.equals(s));
     }
+
+    /**
+     * Proverava da stavka porudžbine nije jednaka objektu druge klase.
+     */
     @Test
     void testEqualsDifferentClass() {
 
@@ -135,6 +194,10 @@ class StavkaPorudzbineTest {
 
         assertFalse(s.equals("tekst"));
     }
+
+    /**
+     * Proverava da stavka porudžbine nije jednaka null vrednosti.
+     */
     @Test
     void testEqualsNull() {
 
@@ -143,6 +206,9 @@ class StavkaPorudzbineTest {
         assertFalse(s.equals(null));
     }
 
+    /**
+     * Proverava hashCode za stavke porudžbine sa istim identifikatorom.
+     */
     @Test
     void testHashCode() {
         StavkaPorudzbine s1 = new StavkaPorudzbine();
@@ -154,6 +220,9 @@ class StavkaPorudzbineTest {
         assertEquals(s1.hashCode(), s2.hashCode());
     }
 
+    /**
+     * Proverava tekstualni prikaz stavke porudžbine.
+     */
     @Test
     void testToString() {
         stavka.setId(1L);
@@ -167,6 +236,10 @@ class StavkaPorudzbineTest {
         assertTrue(s.contains("2"));
         assertTrue(s.contains("1000.0"));
     }
+
+    /**
+     * Proverava validaciju kada redni broj stavke nije postavljen.
+     */
     @Test
     void testRbNotNull() {
 
@@ -181,6 +254,9 @@ class StavkaPorudzbineTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada redni broj stavke nije pozitivan.
+     */
     @Test
     void testRbPositive() {
 
@@ -194,7 +270,10 @@ class StavkaPorudzbineTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("rb"))
         );
     }
-    
+
+    /**
+     * Proverava validaciju kada količina nije postavljena.
+     */
     @Test
     void testKolicinaNotNull() {
 
@@ -209,6 +288,9 @@ class StavkaPorudzbineTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada količina nije pozitivna.
+     */
     @Test
     void testKolicinaPositive() {
 
@@ -222,7 +304,10 @@ class StavkaPorudzbineTest {
                         .anyMatch(v -> v.getPropertyPath().toString().equals("kolicina"))
         );
     }
-    
+
+    /**
+     * Proverava validaciju kada cena knjige u stavci nije postavljena.
+     */
     @Test
     void testCenaKNotNull() {
 
@@ -237,6 +322,9 @@ class StavkaPorudzbineTest {
         );
     }
 
+    /**
+     * Proverava validaciju kada cena knjige u stavci nije pozitivna.
+     */
     @Test
     void testCenaKPositive() {
 

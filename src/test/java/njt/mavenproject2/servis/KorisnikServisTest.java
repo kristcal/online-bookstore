@@ -13,12 +13,33 @@ import njt.mavenproject2.repository.impl.KorisnikRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KorisnikServis}.
+ *
+ * Testira pronalaženje, kreiranje, izmenu i brisanje korisnika.
+ *
+ * @author Korisnik
+ */
 class KorisnikServisTest {
 
+    /**
+     * Mock repozitorijum korisnika.
+     */
     private KorisnikRepository repo;
+
+    /**
+     * Mock mapper za konverziju korisnika.
+     */
     private KorisnikMapper mapper;
+
+    /**
+     * Servis koji se testira.
+     */
     private KorisnikServis servis;
 
+    /**
+     * Inicijalizuje mock objekte pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KorisnikRepository.class);
@@ -26,6 +47,9 @@ class KorisnikServisTest {
         servis = new KorisnikServis(repo, mapper);
     }
 
+    /**
+     * Proverava uspešno kreiranje korisnika.
+     */
     @Test
     void testCreate() {
         KorisnikDto dto = new KorisnikDto();
@@ -56,6 +80,9 @@ class KorisnikServisTest {
         verify(mapper).toDo(korisnik);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih korisnika.
+     */
     @Test
     void testFindAll() {
         Korisnik k = new Korisnik();
@@ -71,6 +98,11 @@ class KorisnikServisTest {
         verify(mapper).toDo(k);
     }
 
+    /**
+     * Proverava uspešno pronalaženje korisnika prema identifikatoru.
+     *
+     * @throws Exception ukoliko korisnik nije pronađen
+     */
     @Test
     void testFindById() throws Exception {
         Korisnik k = new Korisnik();
@@ -89,6 +121,11 @@ class KorisnikServisTest {
         verify(mapper).toDo(k);
     }
 
+    /**
+     * Proverava uspešno ažuriranje korisnika.
+     *
+     * @throws Exception ukoliko korisnik nije pronađen
+     */
     @Test
     void testUpdate() throws Exception {
         KorisnikDto dto = new KorisnikDto();
@@ -120,6 +157,9 @@ class KorisnikServisTest {
         verify(mapper).toDo(existing);
     }
 
+    /**
+     * Proverava uspešno brisanje korisnika prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         servis.deleteById(1L);

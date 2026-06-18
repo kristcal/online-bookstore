@@ -13,11 +13,32 @@ import njt.mavenproject2.entity.impl.Knjiga;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaRepository}.
+ *
+ * Testira osnovne CRUD operacije nad knjigama, pretragu knjiga po žanru,
+ * ceni i tekstualnom kriterijumu, kao i učitavanje knjige sa povezanim
+ * entitetima.
+ *
+ * @author Korisnik
+ */
 class KnjigaRepositoryTest {
 
+    /**
+     * Repozitorijum koji se testira.
+     */
     private KnjigaRepository repo;
+
+    /**
+     * Mock EntityManager koji se koristi za testiranje.
+     */
     private EntityManager entityManager;
 
+    /**
+     * Inicijalizuje repozitorijum i mock EntityManager pre svakog testa.
+     *
+     * @throws Exception ukoliko nije moguće podesiti EntityManager pomoću refleksije
+     */
     @BeforeEach
     void setUp() throws Exception {
         repo = new KnjigaRepository();
@@ -28,6 +49,9 @@ class KnjigaRepositoryTest {
         field.set(repo, entityManager);
     }
 
+    /**
+     * Proverava uspešno pronalaženje svih knjiga.
+     */
     @Test
     void testFindAll() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -49,6 +73,11 @@ class KnjigaRepositoryTest {
         verify(query).getResultList();
     }
 
+    /**
+     * Proverava uspešno pronalaženje knjige prema identifikatoru.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testFindById() throws Exception {
         Knjiga knjiga = new Knjiga();
@@ -62,6 +91,9 @@ class KnjigaRepositoryTest {
         verify(entityManager).find(Knjiga.class, 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga nije pronađena.
+     */
     @Test
     void testFindByIdNePostoji() {
         when(entityManager.find(Knjiga.class, 999L)).thenReturn(null);
@@ -72,6 +104,9 @@ class KnjigaRepositoryTest {
         assertEquals("Knjiga nije pronadjena!", e.getMessage());
     }
 
+    /**
+     * Proverava čuvanje nove knjige pomoću metode persist.
+     */
     @Test
     void testSavePersist() {
         Knjiga knjiga = new Knjiga();
@@ -83,6 +118,9 @@ class KnjigaRepositoryTest {
         verify(entityManager, never()).merge(any());
     }
 
+    /**
+     * Proverava ažuriranje postojeće knjige pomoću metode merge.
+     */
     @Test
     void testSaveMerge() {
         Knjiga knjiga = new Knjiga();
@@ -94,6 +132,9 @@ class KnjigaRepositoryTest {
         verify(entityManager, never()).persist(any());
     }
 
+    /**
+     * Proverava uspešno brisanje knjige prema identifikatoru.
+     */
     @Test
     void testDeleteById() {
         Knjiga knjiga = new Knjiga();
@@ -106,6 +147,9 @@ class KnjigaRepositoryTest {
         verify(entityManager).remove(knjiga);
     }
 
+    /**
+     * Proverava da se ne briše knjiga koja ne postoji.
+     */
     @Test
     void testDeleteByIdNePostoji() {
         when(entityManager.find(Knjiga.class, 999L)).thenReturn(null);
@@ -115,6 +159,9 @@ class KnjigaRepositoryTest {
         verify(entityManager, never()).remove(any());
     }
 
+    /**
+     * Proverava pronalaženje knjiga prema žanru.
+     */
     @Test
     void testFindByGenre() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -133,6 +180,9 @@ class KnjigaRepositoryTest {
         verify(query).setParameter("z", 1L);
     }
 
+    /**
+     * Proverava pronalaženje knjiga koje su jeftinije od zadate cene.
+     */
     @Test
     void testFindCheaperThan() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -151,6 +201,9 @@ class KnjigaRepositoryTest {
         verify(query).setParameter("m", 1000.0);
     }
 
+    /**
+     * Proverava pretragu knjiga bez dodatnih filtera.
+     */
     @Test
     void testSearchBezFiltera() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -168,6 +221,9 @@ class KnjigaRepositoryTest {
         verify(query, never()).setParameter(eq("m"), any());
     }
 
+    /**
+     * Proverava pretragu knjiga sa filterima za žanr i maksimalnu cenu.
+     */
     @Test
     void testSearchSaZanromICenom() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -187,6 +243,11 @@ class KnjigaRepositoryTest {
         verify(query).setParameter("m", 1000.0);
     }
 
+    /**
+     * Proverava učitavanje knjige zajedno sa povezanim entitetima.
+     *
+     * @throws Exception ukoliko knjiga nije pronađena
+     */
     @Test
     void testFindOneFull() throws Exception {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);
@@ -205,6 +266,10 @@ class KnjigaRepositoryTest {
         verify(query).setParameter("id", 1L);
     }
 
+    /**
+     * Proverava ponašanje sistema kada knjiga sa povezanim entitetima
+     * nije pronađena.
+     */
     @Test
     void testFindOneFullNePostoji() {
         TypedQuery<Knjiga> query = mock(TypedQuery.class);

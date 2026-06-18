@@ -13,17 +13,32 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjigaController}.
+ *
+ * Testira dobavljanje svih knjiga, dobavljanje knjige po identifikatoru,
+ * kreiranje, izmenu, brisanje, filtriranje po žanru, filtriranje po ceni
+ * i pretragu knjiga.
+ *
+ * @author Korisnik
+ */
 class KnjigaControllerTest {
 
     private KnjigaServis service;
     private KnjigaController controller;
 
+    /**
+     * Inicijalizuje mock servis i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         service = mock(KnjigaServis.class);
         controller = new KnjigaController(service);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih knjiga.
+     */
     @Test
     void testGetAll() {
         KnjigaDto k1 = new KnjigaDto();
@@ -41,6 +56,11 @@ class KnjigaControllerTest {
         verify(service).findAll();
     }
 
+    /**
+     * Proverava uspešno dobavljanje knjige prema identifikatoru.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetById() throws Exception {
         KnjigaDto dto = new KnjigaDto();
@@ -55,6 +75,11 @@ class KnjigaControllerTest {
         verify(service).findById(1L);
     }
 
+    /**
+     * Proverava obradu izuzetka kada knjiga sa zadatim identifikatorom ne postoji.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testGetByIdException() throws Exception {
         when(service.findById(999L))
@@ -68,6 +93,11 @@ class KnjigaControllerTest {
         assertEquals("Knjiga nije pronađena!", e.getReason());
     }
 
+    /**
+     * Proverava uspešno kreiranje nove knjige.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testCreate() throws Exception {
         KnjigaDto dto = new KnjigaDto();
@@ -86,6 +116,11 @@ class KnjigaControllerTest {
         verify(service).create(dto);
     }
 
+    /**
+     * Proverava uspešnu izmenu postojeće knjige.
+     *
+     * @throws Exception ukoliko servis baci izuzetak
+     */
     @Test
     void testUpdate() throws Exception {
         KnjigaDto dto = new KnjigaDto();
@@ -104,6 +139,9 @@ class KnjigaControllerTest {
         verify(service).update(1L, dto);
     }
 
+    /**
+     * Proverava uspešno brisanje knjige.
+     */
     @Test
     void testDelete() {
         ResponseEntity<Void> response = controller.delete(1L);
@@ -113,6 +151,9 @@ class KnjigaControllerTest {
         verify(service).deleteById(1L);
     }
 
+    /**
+     * Proverava uspešno dobavljanje knjiga prema žanru.
+     */
     @Test
     void testByGenre() {
         KnjigaDto dto = new KnjigaDto();
@@ -127,6 +168,9 @@ class KnjigaControllerTest {
         verify(service).findByGenre(2L);
     }
 
+    /**
+     * Proverava uspešno dobavljanje knjiga čija je cena manja ili jednaka zadatoj.
+     */
     @Test
     void testCheap() {
         KnjigaDto dto = new KnjigaDto();
@@ -141,6 +185,9 @@ class KnjigaControllerTest {
         verify(service).findCheaperThan(1000.0);
     }
 
+    /**
+     * Proverava uspešnu pretragu knjiga prema tekstu, žanru i maksimalnoj ceni.
+     */
     @Test
     void testSearch() {
         KnjigaDto dto = new KnjigaDto();

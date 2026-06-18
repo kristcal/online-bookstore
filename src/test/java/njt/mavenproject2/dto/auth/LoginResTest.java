@@ -4,8 +4,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test klasa za proveru funkcionalnosti DTO klase {@link LoginRes}.
+ *
+ * Testira kreiranje objekta i pristup vrednostima record komponenti.
+ *
+ * @author Korisnik
+ */
 class LoginResTest {
 
+	/**
+	 * Proverava kreiranje LoginRes objekta i pristup njegovim atributima.
+	 */
     @Test
     void testLoginRes() {
 

@@ -13,12 +13,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link AuthController}.
+ *
+ * Testira prijavu korisnika, neuspešnu prijavu, registraciju novog korisnika
+ * i pokušaj registracije sa email adresom koja je već zauzeta.
+ *
+ * @author Korisnik
+ */
 class AuthControllerTest {
 
     private AuthServis authServis;
     private KorisnikRepository korisnikRepo;
     private AuthController controller;
 
+    /**
+     * Inicijalizuje mock objekte i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         authServis = mock(AuthServis.class);
@@ -27,6 +38,11 @@ class AuthControllerTest {
         controller = new AuthController(authServis, korisnikRepo);
     }
 
+    /**
+     * Proverava uspešnu prijavu korisnika.
+     *
+     * @throws Exception ukoliko servis za autentifikaciju baci izuzetak
+     */
     @Test
     void testLoginUspeh() throws Exception {
 
@@ -54,6 +70,11 @@ class AuthControllerTest {
                 .login("test@test.com", "123456");
     }
 
+    /**
+     * Proverava neuspešnu prijavu korisnika zbog pogrešnih podataka.
+     *
+     * @throws Exception ukoliko servis za autentifikaciju baci izuzetak
+     */
     @Test
     void testLoginNeuspeh() throws Exception {
 
@@ -72,6 +93,9 @@ class AuthControllerTest {
                 response.getBody());
     }
 
+    /**
+     * Proverava uspešnu registraciju novog korisnika.
+     */
     @Test
     void testRegisterUspeh() {
 
@@ -93,6 +117,9 @@ class AuthControllerTest {
         verify(korisnikRepo).save(any(Korisnik.class));
     }
 
+    /**
+     * Proverava pokušaj registracije sa email adresom koja je već zauzeta.
+     */
     @Test
     void testRegisterEmailZauzet() {
 

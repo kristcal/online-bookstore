@@ -12,17 +12,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Test klasa za proveru funkcionalnosti klase {@link KnjizaraController}.
+ *
+ * Testira dobavljanje svih knjižara i slučaj kada lista knjižara ne sadrži
+ * nijedan element.
+ *
+ * @author Korisnik
+ */
 class KnjizaraControllerTest {
 
     private KnjizaraRepository repo;
     private KnjizaraController controller;
 
+    /**
+     * Inicijalizuje mock repozitorijum i instancu kontrolera pre svakog testa.
+     */
     @BeforeEach
     void setUp() {
         repo = mock(KnjizaraRepository.class);
         controller = new KnjizaraController(repo);
     }
 
+    /**
+     * Proverava uspešno dobavljanje liste svih knjižara.
+     */
     @Test
     void testGetAll() {
         Knjizara k1 = new Knjizara();
@@ -55,6 +69,9 @@ class KnjizaraControllerTest {
         verify(repo).findAll();
     }
 
+    /**
+     * Proverava dobavljanje knjižara kada repozitorijum vraća praznu listu.
+     */
     @Test
     void testGetAllPraznaLista() {
         when(repo.findAll()).thenReturn(List.of());

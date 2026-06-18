@@ -8,11 +8,22 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
+ * Glavna klasa Spring Boot aplikacije za online poručivanje knjiga.
+ *
+ * Predstavlja ulaznu tačku aplikacije i pokreće Spring Boot
+ * kontejner zajedno sa svim definisanim komponentama,
+ * kontrolerima, servisima, repozitorijumima i konfiguracijama.
  *
  * @author Korisnik
  */
 @SpringBootApplication
 public class PorucivanjeKnjigaAplication {
+	
+	/**
+     * Pokreće aplikaciju.
+     *
+     * @param args argumenti komandne linije
+     */
     public static void main(String[] args) {
         SpringApplication.run(PorucivanjeKnjigaAplication.class, args);
     }

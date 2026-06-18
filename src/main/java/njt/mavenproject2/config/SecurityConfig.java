@@ -12,48 +12,82 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Konfiguracija bezbednosti aplikacije.
+ *
+ * Definiše pravila pristupa REST API rutama, podešava CORS
+ * i onemogućava CSRF zaštitu za potrebe REST komunikacije.
+ *
+ * Trenutno su sve rute dostupne bez autentifikacije,
+ * dok su login i pregled knjiga eksplicitno dozvoljeni.
+ *
+ * @author Korisnik
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Konfiguriše sigurnosni filter lanac aplikacije.
+     *
+     * Isključuje CSRF zaštitu, omogućava CORS podršku
+     * i definiše pravila pristupa API rutama.
+     *
+     * @param http objekat za konfiguraciju HTTP bezbednosti
+     * @return konfigurisan sigurnosni filter lanac
+     * @throws Exception ukoliko dođe do greške prilikom konfiguracije
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 1️⃣ — isključi CSRF za REST API
+            // isključi CSRF za REST API
             .csrf(csrf -> csrf.disable())
-            // 2️⃣ — dozvoli CORS za frontend (React)
+
+            // omogući CORS
             .cors(Customizer.withDefaults())
-            // 3️⃣ — pravila pristupa po rutama
+
+            // pravila pristupa rutama
             .authorizeHttpRequests(auth -> auth
-                // login je otvoren
                 .requestMatchers("/api/auth/**").permitAll()
-                // svi mogu da vide knjige
                 .requestMatchers(HttpMethod.GET, "/api/knjige/**").permitAll()
-                // sve ostalo (porudzbine, CRUD...) dozvoli za sad
                 .anyRequest().permitAll()
             );
+
         return http.build();
     }
 
+    /**
+     * Konfiguriše CORS pravila za frontend aplikaciju.
+     *
+     * Dozvoljava zahteve sa lokalnog React frontenda,
+     * definiše podržane HTTP metode i zaglavlja.
+     *
+     * @return izvor CORS konfiguracije
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
+
         cfg.setAllowedOrigins(List.of(
-            "http://localhost:3000",      // lokalni frontend
-            "http://172.20.10.3:3000"     // IP tvoja mreža
+                "http://localhost:3000",
+                "http://172.20.10.3:3000"
         ));
+
         cfg.setAllowedMethods(List.of(
-            HttpMethod.GET.name(),
-            HttpMethod.POST.name(),
-            HttpMethod.PUT.name(),
-            HttpMethod.DELETE.name(),
-            HttpMethod.OPTIONS.name()
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.DELETE.name(),
+                HttpMethod.OPTIONS.name()
         ));
+
         cfg.setAllowedHeaders(List.of("*"));
         cfg.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // 4️⃣ — dozvoli sve /api putanje
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/api/**", cfg);
+
         return source;
     }
 }
