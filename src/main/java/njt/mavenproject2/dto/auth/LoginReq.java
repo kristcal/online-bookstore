@@ -5,6 +5,13 @@
 package njt.mavenproject2.dto.auth;
 
 /**
+ * DTO koji predstavlja zahtev za prijavu korisnika.
+ *
+ * Sadrži email adresu i lozinku koje korisnik unosi
+ * prilikom prijavljivanja u sistem.
+ *
+ * @param email email adresa korisnika
+ * @param password lozinka korisnika
  *
  * @author Korisnik
  */
