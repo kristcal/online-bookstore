@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package njt.mavenproject2.controller;
 
 import jakarta.validation.Valid;
@@ -13,21 +9,51 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Kontroler zadužen za rad sa dostupnošću knjiga u knjižarama.
+ *
+ * Omogućava prikaz dostupnosti knjige, dodavanje knjige u ponudu knjižare,
+ * izmenu količine i uklanjanje knjige iz ponude.
+ * Klasa prima HTTP zahteve na putanji {@code /api/knjiga/{knjigaId}/ponuda}.
+ *
+ * @author Korisnik
+ */
 @RestController
 @RequestMapping("/api/knjiga/{knjigaId}/ponuda")
 public class KnjigaKnjizaraController {
 
+    /**
+     * Servis za rad sa dostupnošću knjiga u knjižarama.
+     */
     private final KnjigaKnjizaraServis servis;
 
+    /**
+     * Kreira kontroler za rad sa ponudom knjiga u knjižarama.
+     *
+     * @param servis servis za dostupnost knjiga u knjižarama
+     */
     public KnjigaKnjizaraController(KnjigaKnjizaraServis servis) {
         this.servis = servis;
     }
 
+    /**
+     * Vraća dostupnost određene knjige po knjižarama.
+     *
+     * @param knjigaId identifikator knjige
+     * @return lista dostupnosti knjige
+     */
     @GetMapping
     public ResponseEntity<List<KnjigaKnjizaraDto>> list(@PathVariable Long knjigaId) {
         return ResponseEntity.ok(servis.listForKnjiga(knjigaId));
     }
 
+    /**
+     * Dodaje ili postavlja dostupnost knjige u knjižari.
+     *
+     * @param knjigaId identifikator knjige
+     * @param dto DTO objekat sa podacima o knjižari i količini
+     * @return kreirana dostupnost knjige
+     */
     @PostMapping
     public ResponseEntity<KnjigaKnjizaraDto> add(@PathVariable Long knjigaId,
             @Valid @RequestBody KnjigaKnjizaraDto dto) {
@@ -38,6 +64,14 @@ public class KnjigaKnjizaraController {
         }
     }
 
+    /**
+     * Ažurira količinu knjige u knjižari.
+     *
+     * @param knjigaId identifikator knjige
+     * @param kkId identifikator veze između knjige i knjižare
+     * @param body mapa koja sadrži novu količinu
+     * @return ažurirana dostupnost knjige
+     */
     @PutMapping("/{kkId}")
     public ResponseEntity<KnjigaKnjizaraDto> updateQty(@PathVariable Long knjigaId,
             @PathVariable Long kkId,
@@ -50,6 +84,13 @@ public class KnjigaKnjizaraController {
         }
     }
 
+    /**
+     * Uklanja knjigu iz ponude knjižare.
+     *
+     * @param knjigaId identifikator knjige
+     * @param kkId identifikator veze između knjige i knjižare
+     * @return prazan odgovor
+     */
     @DeleteMapping("/{kkId}")
     public ResponseEntity<Void> remove(@PathVariable Long knjigaId, @PathVariable Long kkId) {
         servis.remove(kkId);
