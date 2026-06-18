@@ -2,7 +2,6 @@ package njt.mavenproject2.mapper.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import njt.mavenproject2.dto.impl.KnjigaDto;
 import njt.mavenproject2.entity.impl.Knjiga;
 import njt.mavenproject2.entity.impl.KnjigaAutor;
@@ -10,9 +9,23 @@ import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.mapper.DtoEntityMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper za konverziju između entiteta Knjiga i DTO objekta KnjigaDto.
+ *
+ * Omogućava mapiranje osnovnih podataka o knjizi, žanra, autora i dostupnosti
+ * knjige u knjižarama.
+ *
+ * @author Korisnik
+ */
 @Component
 public class KnjigaMapper implements DtoEntityMapper<KnjigaDto, Knjiga> {
 
+    /**
+     * Konvertuje entitet Knjiga u DTO objekat.
+     *
+     * @param e entitet knjige
+     * @return DTO objekat knjige
+     */
     @Override
     public KnjigaDto toDo(Knjiga e) {
         if (e == null) {
@@ -33,26 +46,27 @@ public class KnjigaMapper implements DtoEntityMapper<KnjigaDto, Knjiga> {
             d.setZanrNaziv(e.getZanr().getNaziv());
         }
 
-        // --- AUTORI ---
         List<KnjigaDto.AutorView> aut = new ArrayList<>();
         if (e.getAutori() != null) {
             for (KnjigaAutor ka : e.getAutori()) {
                 if (ka.getAutor() == null) {
                     continue;
                 }
+
                 KnjigaDto.AutorView a = new KnjigaDto.AutorView();
                 a.id = ka.getAutor().getId();
                 a.ime = ka.getAutor().getIme();
                 a.prezime = ka.getAutor().getPrezime();
                 a.uloga = ka.getUloga();
+
                 aut.add(a);
             }
         }
         d.setAutori(aut);
 
-        // --- DOSTUPNOST / KOLIČINA ---
         int total = 0;
         List<KnjigaDto.DostupnostView> dList = new ArrayList<>();
+
         if (e.getDostupnost() != null) {
             for (KnjigaKnjizara kk : e.getDostupnost()) {
                 int kol = kk.getKolicina() == null ? 0 : kk.getKolicina();
@@ -64,24 +78,34 @@ public class KnjigaMapper implements DtoEntityMapper<KnjigaDto, Knjiga> {
                 if (kk.getKnjizara() != null) {
                     dv.knjizaraId = kk.getKnjizara().getId();
                     dv.knjizaraNaziv = kk.getKnjizara().getNaziv();
-                    // ⬇️ DODATO: lokacija knjižare
                     dv.lokacija = kk.getKnjizara().getLokacija();
                 }
 
                 dList.add(dv);
             }
         }
+
         d.setKolicina(total);
         d.setDostupnost(dList);
 
         return d;
     }
 
+    /**
+     * Konvertuje DTO objekat KnjigaDto u entitet Knjiga.
+     *
+     * Povezani entiteti kao što su žanr, autori i dostupnost postavljaju se
+     * u servisnom sloju.
+     *
+     * @param d DTO objekat knjige
+     * @return entitet knjige
+     */
     @Override
     public Knjiga toEntity(KnjigaDto d) {
         if (d == null) {
             return null;
         }
+
         Knjiga e = new Knjiga();
         e.setId(d.getId());
         e.setNaziv(d.getNaziv());
@@ -91,13 +115,14 @@ public class KnjigaMapper implements DtoEntityMapper<KnjigaDto, Knjiga> {
         e.setGodinaIzdanja(d.getGodinaIzdanja());
         e.setImageUrl(d.getImageUrl());
 
-        // ključni deo
         if (e.getAutori() == null) {
             e.setAutori(new ArrayList<>());
         }
+
         if (e.getDostupnost() == null) {
             e.setDostupnost(new ArrayList<>());
         }
+
         return e;
     }
 }
