@@ -1,10 +1,11 @@
 package njt.mavenproject2.servis;
 
 import jakarta.transaction.Transactional;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.PorudzbinaDto;
 import njt.mavenproject2.entity.impl.Knjiga;
+import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.entity.impl.Korisnik;
 import njt.mavenproject2.entity.impl.Porudzbina;
 import njt.mavenproject2.entity.impl.StavkaPorudzbine;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Service;
  * Servis zadužen za rad sa porudžbinama.
  *
  * Omogućava pronalaženje, kreiranje, izmenu, brisanje i promenu statusa
- * porudžbina. Prilikom kreiranja i izmene porudžbine računa se ukupan iznos
- * na osnovu stavki porudžbine.
+ * porudžbina. Prilikom kreiranja i izmene porudžbine računa se ukupan iznos na
+ * osnovu stavki porudžbine.
  *
  * Podaci se razmenjuju preko klase {@link PorudzbinaDto}, dok se mapiranje
  * između DTO i entitetske klase vrši pomoću klase {@link PorudzbinaMapper}.
@@ -56,6 +57,11 @@ public class PorudzbinaServis {
     private final KnjigaKnjizaraRepository kkRepo;
 
     /**
+     * Status koji označava da je porudžbina obrađena i zalihe skinute.
+     */
+    private static final String STATUS_OBRADJENA = "OBRADJENA";
+
+    /**
      * Kreira servis za rad sa porudžbinama.
      *
      * @param repo repozitorijum porudžbina
@@ -87,7 +93,7 @@ public class PorudzbinaServis {
         return repo.findAll()
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -95,7 +101,8 @@ public class PorudzbinaServis {
      *
      * @param id identifikator porudžbine
      * @return pronađena porudžbina u obliku DTO objekta
-     * @throws Exception ukoliko porudžbina sa zadatim identifikatorom ne postoji
+     * @throws Exception ukoliko porudžbina sa zadatim identifikatorom ne
+     * postoji
      */
     public PorudzbinaDto findById(Long id) throws Exception {
         return mapper.toDo(repo.findById(id));
@@ -104,8 +111,8 @@ public class PorudzbinaServis {
     /**
      * Kreira novu porudžbinu.
      *
-     * Datum se postavlja na serverskoj strani, a ukupan iznos se računa
-     * na osnovu stavki porudžbine.
+     * Datum se postavlja na serverskoj strani, a ukupan iznos se računa na
+     * osnovu stavki porudžbine.
      *
      * @param dto DTO objekat sa podacima o porudžbini
      * @return kreirana porudžbina u obliku DTO objekta
@@ -124,7 +131,7 @@ public class PorudzbinaServis {
 
         Porudzbina p = new Porudzbina();
         p.setKorisnik(k);
-        p.setDatum(java.time.LocalDateTime.now());
+        p.setDatum(java.time.LocalDateTime.now(ZoneId.of("Europe/Belgrade")));
         p.setUkupanIznos(0d);
 
         double suma = 0d;
@@ -155,8 +162,8 @@ public class PorudzbinaServis {
     /**
      * Ažurira postojeću porudžbinu.
      *
-     * Datum porudžbine se ne preuzima iz DTO objekta, već ostaje kontrolisan
-     * na serverskoj strani. Moguće je promeniti korisnika i kompletno zameniti
+     * Datum porudžbine se ne preuzima iz DTO objekta, već ostaje kontrolisan na
+     * serverskoj strani. Moguće je promeniti korisnika i kompletno zameniti
      * stavke porudžbine.
      *
      * @param id identifikator porudžbine koja se ažurira
@@ -228,7 +235,7 @@ public class PorudzbinaServis {
         return repo.findByKorisnikId(korisnikId)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -250,11 +257,11 @@ public class PorudzbinaServis {
 
         String target = (noviStatus == null ? "" : noviStatus.trim()).toUpperCase();
 
-        if (stari != null && stari.equalsIgnoreCase("OBRADJENA") && target.equals("OBRADJENA")) {
+        if (stari != null && stari.equalsIgnoreCase(STATUS_OBRADJENA) && target.equals(STATUS_OBRADJENA)) {
             return mapper.toDo(p);
         }
 
-        if (target.equals("OBRADJENA")) {
+        if (target.equals(STATUS_OBRADJENA)) {
             skiniZaliheZa(p);
         }
 
@@ -280,42 +287,59 @@ public class PorudzbinaServis {
         }
 
         for (StavkaPorudzbine s : p.getStavke()) {
-            if (s.getKnjiga() == null) {
-                continue;
+            skiniZalihuZaStavku(s);
+        }
+    }
+
+    /**
+     * Skida zalihu za jednu stavku porudžbine.
+     *
+     * @param s stavka porudžbine za koju se skida zaliha
+     * @throws Exception ukoliko nema dovoljno knjiga na stanju
+     */
+    private void skiniZalihuZaStavku(StavkaPorudzbine s) throws Exception {
+        if (s.getKnjiga() == null) {
+            return;
+        }
+
+        int potrebno = s.getKolicina() == null ? 0 : s.getKolicina();
+        if (potrebno <= 0) {
+            return;
+        }
+
+        var redovi = kkRepo.findByKnjigaIdForUpdate(s.getKnjiga().getId());
+        int skinuto = skiniSaRedova(redovi, potrebno);
+
+        if (skinuto < potrebno) {
+            throw new Exception("Nema dovoljno na stanju za: " + s.getKnjiga().getNaziv());
+        }
+    }
+
+    /**
+     * Skida potrebnu količinu sa raspoloživih redova dostupnosti.
+     *
+     * @param redovi redovi dostupnosti knjige po knjižarama
+     * @param potrebno potrebna količina za skidanje
+     * @return ukupno skinuta količina
+     */
+    private int skiniSaRedova(List<KnjigaKnjizara> redovi, int potrebno) {
+        int skinuto = 0;
+
+        for (var kk : redovi) {
+            if (skinuto >= potrebno) {
+                break;
             }
 
-            int potrebno = s.getKolicina() == null ? 0 : s.getKolicina();
-            if (potrebno <= 0) {
-                continue;
-            }
+            int naStanju = kk.getKolicina() == null ? 0 : kk.getKolicina();
+            int uzmi = Math.min(potrebno - skinuto, naStanju);
 
-            var redovi = kkRepo.findByKnjigaIdForUpdate(s.getKnjiga().getId());
-            int skinuto = 0;
-
-            for (var kk : redovi) {
-                int naStanju = kk.getKolicina() == null ? 0 : kk.getKolicina();
-                if (naStanju <= 0) {
-                    continue;
-                }
-
-                int uzmi = Math.min(potrebno - skinuto, naStanju);
-                if (uzmi <= 0) {
-                    break;
-                }
-
+            if (uzmi > 0) {
                 kk.setKolicina(naStanju - uzmi);
                 kkRepo.save(kk);
-
                 skinuto += uzmi;
-
-                if (skinuto >= potrebno) {
-                    break;
-                }
-            }
-
-            if (skinuto < potrebno) {
-                throw new Exception("Nema dovoljno na stanju za: " + s.getKnjiga().getNaziv());
             }
         }
+
+        return skinuto;
     }
 }

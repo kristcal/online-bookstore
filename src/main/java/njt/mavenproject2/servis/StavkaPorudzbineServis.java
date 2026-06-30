@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.StavkaPorudzbineDto;
 import njt.mavenproject2.entity.impl.Knjiga;
 import njt.mavenproject2.entity.impl.Porudzbina;
@@ -78,7 +77,7 @@ public class StavkaPorudzbineServis {
         return repo.findByPorudzbinaId(porudzbinaId)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -200,6 +199,7 @@ public class StavkaPorudzbineServis {
 
             porRepo.save(p);
         } catch (Exception ignore) {
+            // Stavka ne postoji - metoda namerno ne baca grešku, brisanje se tretira kao idempotentno.
         }
     }
 }

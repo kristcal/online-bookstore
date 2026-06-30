@@ -1,8 +1,6 @@
 package njt.mavenproject2.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import njt.mavenproject2.entity.impl.Autor;
 import njt.mavenproject2.repository.impl.AutorRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +42,7 @@ public class AutorController {
         List<AutorDto> list = repo.findAll()
                 .stream()
                 .map(a -> new AutorDto(a.getId(), a.getIme(), a.getPrezime()))
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(list);
     }

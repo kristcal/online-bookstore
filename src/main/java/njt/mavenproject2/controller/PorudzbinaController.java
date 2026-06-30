@@ -52,7 +52,7 @@ public class PorudzbinaController {
      * @return pronađena porudžbina ili poruka o grešci
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.findById(id));
         } catch (Exception e) {
@@ -68,7 +68,7 @@ public class PorudzbinaController {
      */
     @PostMapping
     @Transactional
-    public ResponseEntity<?> create(@Valid @RequestBody PorudzbinaDto req) {
+    public ResponseEntity<Object> create(@Valid @RequestBody PorudzbinaDto req) {
         try {
             PorudzbinaDto res = service.create(req);
             return ResponseEntity.ok(res);
@@ -86,7 +86,7 @@ public class PorudzbinaController {
      */
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PorudzbinaDto req) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody PorudzbinaDto req) {
         try {
             PorudzbinaDto res = service.update(id, req);
             return ResponseEntity.ok(res);
@@ -102,7 +102,7 @@ public class PorudzbinaController {
      * @return poruka o uspešnom brisanju
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok("Porudžbina obrisana.");
     }

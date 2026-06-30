@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.AutorDto;
 import njt.mavenproject2.entity.impl.Autor;
 import njt.mavenproject2.mapper.impl.AutorMapper;
@@ -12,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Servis zadužen za rad sa autorima.
  *
- * Omogućava pronalaženje, kreiranje, izmenu i brisanje autora.
- * Podaci se razmenjuju preko klase {@link AutorDto}, dok se mapiranje
- * između DTO i entitetske klase vrši pomoću klase {@link AutorMapper}.
+ * Omogućava pronalaženje, kreiranje, izmenu i brisanje autora. Podaci se
+ * razmenjuju preko klase {@link AutorDto}, dok se mapiranje između DTO i
+ * entitetske klase vrši pomoću klase {@link AutorMapper}.
  *
  * @author Korisnik
  */
@@ -48,7 +47,7 @@ public class AutorServis {
      * @return lista svih autora u obliku DTO objekata
      */
     public List<AutorDto> findAll() {
-        return repo.findAll().stream().map(mapper::toDo).collect(Collectors.toList());
+        return repo.findAll().stream().map(mapper::toDo).toList();
     }
 
     /**
@@ -70,9 +69,7 @@ public class AutorServis {
      */
     @Transactional
     public AutorDto create(AutorDto dto) {
-        Autor a = mapper.toEntity(dto);
-        repo.save(a);
-        return mapper.toDo(a);
+        return saveAndMap(dto);
     }
 
     /**
@@ -83,6 +80,16 @@ public class AutorServis {
      */
     @Transactional
     public AutorDto update(AutorDto dto) {
+        return saveAndMap(dto);
+    }
+
+    /**
+     * Čuva autora i vraća rezultat u obliku DTO objekta.
+     *
+     * @param dto DTO objekat sa podacima o autoru
+     * @return sačuvani autor u obliku DTO objekta
+     */
+    private AutorDto saveAndMap(AutorDto dto) {
         Autor a = mapper.toEntity(dto);
         repo.save(a);
         return mapper.toDo(a);

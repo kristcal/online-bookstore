@@ -3,6 +3,7 @@ package njt.mavenproject2.mapper.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class KnjigaMapperTest {
         knjiga.setOpis("Opis");
         knjiga.setCena(1200.0);
         knjiga.setIsbn("123");
-        knjiga.setGodinaIzdanja(LocalDate.of(1945, 1, 1));
+        knjiga.setGodinaIzdanja(LocalDate.of(1945, Month.JANUARY, 1));
         knjiga.setImageUrl("slika.jpg");
         knjiga.setZanr(zanr);
 
@@ -79,7 +80,7 @@ class KnjigaMapperTest {
         assertEquals("Opis", dto.getOpis());
         assertEquals(1200.0, dto.getCena());
         assertEquals("123", dto.getIsbn());
-        assertEquals(LocalDate.of(1945, 1, 1), dto.getGodinaIzdanja());
+        assertEquals(LocalDate.of(1945, Month.JANUARY, 1), dto.getGodinaIzdanja());
         assertEquals("slika.jpg", dto.getImageUrl());
 
         assertEquals(1L, dto.getZanrId());
@@ -165,7 +166,7 @@ class KnjigaMapperTest {
         dto.setOpis("Opis");
         dto.setCena(1000.0);
         dto.setIsbn("123");
-        dto.setGodinaIzdanja(LocalDate.of(1949, 1, 1));
+        dto.setGodinaIzdanja(LocalDate.of(1949, Month.JANUARY, 1));
         dto.setImageUrl("cover.jpg");
 
         Knjiga knjiga = mapper.toEntity(dto);
@@ -176,7 +177,7 @@ class KnjigaMapperTest {
         assertEquals("Opis", knjiga.getOpis());
         assertEquals(1000.0, knjiga.getCena());
         assertEquals("123", knjiga.getIsbn());
-        assertEquals(LocalDate.of(1949, 1, 1), knjiga.getGodinaIzdanja());
+        assertEquals(LocalDate.of(1949, Month.JANUARY, 1), knjiga.getGodinaIzdanja());
         assertEquals("cover.jpg", knjiga.getImageUrl());
         assertNotNull(knjiga.getAutori());
         assertNotNull(knjiga.getDostupnost());

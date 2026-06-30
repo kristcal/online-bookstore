@@ -9,7 +9,6 @@ import java.util.List;
 import njt.mavenproject2.dto.impl.KnjigaDto;
 import njt.mavenproject2.entity.impl.Autor;
 import njt.mavenproject2.entity.impl.Knjiga;
-import njt.mavenproject2.entity.impl.KnjigaKnjizara;
 import njt.mavenproject2.entity.impl.Knjizara;
 import njt.mavenproject2.entity.impl.Zanr;
 import njt.mavenproject2.mapper.impl.KnjigaMapper;

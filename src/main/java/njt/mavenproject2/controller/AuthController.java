@@ -52,7 +52,7 @@ public class AuthController {
      * @return odgovor sa podacima o prijavljenom korisniku ili poruka o grešci
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReq req) {
+    public ResponseEntity<Object> login(@RequestBody LoginReq req) {
         try {
             Korisnik k = authServis.login(req.email(), req.password());
             String token = "demo-token";
@@ -81,7 +81,7 @@ public class AuthController {
      * @return HTTP odgovor koji označava uspeh ili grešku pri registraciji
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterReq req) {
+    public ResponseEntity<Object> register(@RequestBody RegisterReq req) {
         if (korisnikRepo.findByEmail(req.email()) != null) {
             return ResponseEntity.status(409).body("Email je zauzet.");
         }

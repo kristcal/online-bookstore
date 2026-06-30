@@ -1,7 +1,6 @@
 package njt.mavenproject2.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.repository.impl.KnjizaraRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +42,7 @@ public class KnjizaraController {
         List<KnjizaraDto> list = repo.findAll()
                 .stream()
                 .map(k -> new KnjizaraDto(k.getId(), k.getNaziv(), k.getLokacija()))
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(list);
     }

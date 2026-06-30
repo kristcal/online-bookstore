@@ -3,6 +3,7 @@ package njt.mavenproject2.mapper.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,7 @@ class PorudzbinaMapperTest {
 
         Porudzbina p = new Porudzbina();
         p.setId(1L);
-        p.setDatum(LocalDateTime.of(2026, 6, 12, 10, 0));
+        p.setDatum(LocalDateTime.of(2026, Month.JUNE, 12, 10, 0));
         p.setUkupanIznos(2500.0);
         p.setStatus("KREIRANA");
         p.setKorisnik(korisnik);
@@ -45,7 +46,7 @@ class PorudzbinaMapperTest {
 
         assertNotNull(dto);
         assertEquals(1L, dto.getId());
-        assertEquals(LocalDateTime.of(2026, 6, 12, 10, 0), dto.getDatum());
+        assertEquals(LocalDateTime.of(2026, Month.JUNE, 12, 10, 0), dto.getDatum());
         assertEquals(2500.0, dto.getUkupanIznos());
         assertEquals("KREIRANA", dto.getStatus());
         assertEquals(5L, dto.getKorisnikId());
@@ -82,7 +83,7 @@ class PorudzbinaMapperTest {
     void testToEntity() {
         PorudzbinaDto dto = new PorudzbinaDto();
         dto.setId(1L);
-        dto.setDatum(LocalDateTime.of(2026, 6, 12, 10, 0));
+        dto.setDatum(LocalDateTime.of(2026, Month.JUNE, 12, 10, 0));
         dto.setUkupanIznos(3000.0);
         dto.setStatus("OBRADJENA");
 
@@ -90,7 +91,7 @@ class PorudzbinaMapperTest {
 
         assertNotNull(p);
         assertEquals(1L, p.getId());
-        assertEquals(LocalDateTime.of(2026, 6, 12, 10, 0), p.getDatum());
+        assertEquals(LocalDateTime.of(2026, Month.JUNE, 12, 10, 0), p.getDatum());
         assertEquals(3000.0, p.getUkupanIznos());
         assertEquals("OBRADJENA", p.getStatus());
     }

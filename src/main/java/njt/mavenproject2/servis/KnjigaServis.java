@@ -89,7 +89,7 @@ public class KnjigaServis {
         return repo.findAll()
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -258,7 +258,7 @@ public class KnjigaServis {
         return repo.findByGenre(zanrId)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -271,7 +271,7 @@ public class KnjigaServis {
         return repo.findCheaperThan(max)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -286,6 +286,6 @@ public class KnjigaServis {
         return repo.search(q, zanrId, max)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

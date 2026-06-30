@@ -17,8 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import njt.mavenproject2.entity.MyEntity;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

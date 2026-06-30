@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.ZanrDto;
 import njt.mavenproject2.entity.impl.Zanr;
 import njt.mavenproject2.mapper.impl.ZanrMapper;
@@ -12,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Servis zadužen za rad sa žanrovima.
  *
- * Omogućava pronalaženje, kreiranje, izmenu i brisanje žanrova.
- * Podaci se razmenjuju preko klase {@link ZanrDto}, dok se mapiranje
- * između DTO i entitetske klase vrši pomoću klase {@link ZanrMapper}.
+ * Omogućava pronalaženje, kreiranje, izmenu i brisanje žanrova. Podaci se
+ * razmenjuju preko klase {@link ZanrDto}, dok se mapiranje između DTO i
+ * entitetske klase vrši pomoću klase {@link ZanrMapper}.
  *
  * @author Korisnik
  */
@@ -51,7 +50,7 @@ public class ZanrServis {
         return zanrRepository.findAll()
                 .stream()
                 .map(zanrMapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -73,9 +72,7 @@ public class ZanrServis {
      */
     @Transactional
     public ZanrDto create(ZanrDto dto) {
-        Zanr z = zanrMapper.toEntity(dto);
-        zanrRepository.save(z);
-        return zanrMapper.toDo(z);
+        return saveAndMap(dto);
     }
 
     /**
@@ -86,6 +83,16 @@ public class ZanrServis {
      */
     @Transactional
     public ZanrDto update(ZanrDto dto) {
+        return saveAndMap(dto);
+    }
+
+    /**
+     * Čuva žanr i vraća rezultat u obliku DTO objekta.
+     *
+     * @param dto DTO objekat sa podacima o žanru
+     * @return sačuvani žanr u obliku DTO objekta
+     */
+    private ZanrDto saveAndMap(ZanrDto dto) {
         Zanr z = zanrMapper.toEntity(dto);
         zanrRepository.save(z);
         return zanrMapper.toDo(z);

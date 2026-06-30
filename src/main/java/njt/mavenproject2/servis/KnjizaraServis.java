@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.KnjizaraDto;
 import njt.mavenproject2.entity.impl.Knjizara;
 import njt.mavenproject2.mapper.impl.KnjizaraMapper;
@@ -54,7 +53,7 @@ public class KnjizaraServis {
         return knjizaraRepository.findAll()
                 .stream()
                 .map(knjizaraMapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

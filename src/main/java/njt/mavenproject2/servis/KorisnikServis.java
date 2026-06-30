@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.KorisnikDto;
 import njt.mavenproject2.entity.impl.Korisnik;
 import njt.mavenproject2.mapper.impl.KorisnikMapper;
@@ -51,7 +50,7 @@ public class KorisnikServis {
         return repo.findAll()
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

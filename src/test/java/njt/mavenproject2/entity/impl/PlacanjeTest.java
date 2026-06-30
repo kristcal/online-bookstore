@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.time.Month;
 
 /**
  * Test klasa za proveru funkcionalnosti entiteta {@link Placanje}.
@@ -113,7 +114,7 @@ class PlacanjeTest {
      */
     @Test
     void testSetDatumPlacanja() {
-        LocalDateTime datum = LocalDateTime.now();
+        LocalDateTime datum = LocalDateTime.of(2026, Month.JUNE, 11, 17, 0);
         placanje.setDatumPlacanja(datum);
         assertEquals(datum, placanje.getDatumPlacanja());
     }

@@ -1,7 +1,6 @@
 package njt.mavenproject2.servis;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import njt.mavenproject2.dto.impl.KnjigaKnjizaraDto;
 import njt.mavenproject2.entity.impl.Knjiga;
 import njt.mavenproject2.entity.impl.KnjigaKnjizara;
@@ -73,7 +72,7 @@ public class KnjigaKnjizaraServis {
         return repo.findByKnjigaId(knjigaId)
                 .stream()
                 .map(mapper::toDo)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

@@ -114,12 +114,12 @@ public class StavkaPorudzbineRepository implements MyAppRepository<StavkaPorudzb
      * @return najveći redni broj stavke za zadatu porudžbinu
      */
     public Integer findMaxRbForPorudzbina(Long porudzbinaId) {
-        Integer max = entityManager.createQuery(
+        return entityManager.createQuery(
                 "SELECT COALESCE(MAX(s.rb), 0) FROM StavkaPorudzbine s WHERE s.porudzbina.id = :pid",
                 Integer.class
         )
                 .setParameter("pid", porudzbinaId)
                 .getSingleResult();
-        return max;
+        
     }
 }
