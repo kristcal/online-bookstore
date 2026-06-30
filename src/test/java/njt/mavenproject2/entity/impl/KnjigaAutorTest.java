@@ -114,7 +114,7 @@ class KnjigaAutorTest {
         KnjigaAutor ka2 = new KnjigaAutor();
         ka2.setId(1L);
 
-        assertTrue(ka1.equals(ka2));
+        assertEquals(ka1,ka2);
     }
 
     /**
@@ -128,7 +128,7 @@ class KnjigaAutorTest {
         KnjigaAutor ka2 = new KnjigaAutor();
         ka2.setId(2L);
 
-        assertFalse(ka1.equals(ka2));
+        assertNotEquals(ka1,ka2);
     }
 
     /**
@@ -138,7 +138,7 @@ class KnjigaAutorTest {
     void testEqualsNull() {
         knjigaAutor.setId(1L);
 
-        assertFalse(knjigaAutor.equals(null));
+        assertNotEquals(null,knjigaAutor);
     }
 
     /**
@@ -148,7 +148,7 @@ class KnjigaAutorTest {
     void testEqualsDrugaKlasa() {
         knjigaAutor.setId(1L);
 
-        assertFalse(knjigaAutor.equals("tekst"));
+        assertNotEquals("tekst",knjigaAutor);
     }
 
     /**

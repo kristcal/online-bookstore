@@ -17,8 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 /**
  * Test klasa za proveru funkcionalnosti klase {@link KnjigaKnjizaraController}.
  *
- * Testira dobavljanje ponude za knjigu, dodavanje knjige u knjižaru,
- * izmenu količine, obradu izuzetaka i uklanjanje veze knjiga-knjižara.
+ * Testira dobavljanje ponude za knjigu, dodavanje knjige u knjižaru, izmenu
+ * količine, obradu izuzetaka i uklanjanje veze knjiga-knjižara.
  *
  * @author Korisnik
  */
@@ -45,8 +45,8 @@ class KnjigaKnjizaraControllerTest {
 
         when(servis.listForKnjiga(10L)).thenReturn(List.of(dto));
 
-        ResponseEntity<List<KnjigaKnjizaraDto>> response =
-                controller.list(10L);
+        ResponseEntity<List<KnjigaKnjizaraDto>> response
+                = controller.list(10L);
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(1, response.getBody().size());
@@ -67,8 +67,8 @@ class KnjigaKnjizaraControllerTest {
 
         when(servis.addOrSet(10L, dto)).thenReturn(saved);
 
-        ResponseEntity<KnjigaKnjizaraDto> response =
-                controller.add(10L, dto);
+        ResponseEntity<KnjigaKnjizaraDto> response
+                = controller.add(10L, dto);
 
         assertEquals(201, response.getStatusCode().value());
         assertEquals(1L, response.getBody().getId());
@@ -107,8 +107,8 @@ class KnjigaKnjizaraControllerTest {
 
         when(servis.updateKolicina(1L, 20)).thenReturn(updated);
 
-        ResponseEntity<KnjigaKnjizaraDto> response =
-                controller.updateQty(10L, 1L, Map.of("kolicina", 20));
+        ResponseEntity<KnjigaKnjizaraDto> response
+                = controller.updateQty(10L, 1L, Map.of("kolicina", 20));
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(20, response.getBody().getKolicina());
@@ -126,9 +126,11 @@ class KnjigaKnjizaraControllerTest {
         when(servis.updateKolicina(1L, 20))
                 .thenThrow(new Exception("Veza nije pronađena!"));
 
+        Map<String, Integer> body = Map.of("kolicina", 20);
+
         ResponseStatusException e = assertThrows(
                 ResponseStatusException.class,
-                () -> controller.updateQty(10L, 1L, Map.of("kolicina", 20)));
+                () -> controller.updateQty(10L, 1L, body));
 
         assertEquals(400, e.getStatusCode().value());
         assertEquals("Veza nije pronađena!", e.getReason());
@@ -139,8 +141,8 @@ class KnjigaKnjizaraControllerTest {
      */
     @Test
     void testRemove() {
-        ResponseEntity<Void> response =
-                controller.remove(10L, 1L);
+        ResponseEntity<Void> response
+                = controller.remove(10L, 1L);
 
         assertEquals(200, response.getStatusCode().value());
         assertNull(response.getBody());

@@ -61,7 +61,7 @@ class PlacanjeTest {
      */
     @Test
     void testPlacanjeLongDoubleStringStringLocalDateTimeString() {
-        LocalDateTime datum = LocalDateTime.of(2026, 6, 11, 17, 0);
+        LocalDateTime datum = LocalDateTime.of(2026, Month.JUNE, 11, 17, 0);
 
         placanje = new Placanje(1L, 2500.0, "Kartica", "PLACENO", datum, "2026-001");
 
@@ -152,7 +152,7 @@ class PlacanjeTest {
         Placanje p2 = new Placanje();
         p2.setId(1L);
 
-        assertTrue(p1.equals(p2));
+        assertEquals(p1,p2);
     }
 
     /**
@@ -166,7 +166,7 @@ class PlacanjeTest {
         Placanje p2 = new Placanje();
         p2.setId(2L);
 
-        assertFalse(p1.equals(p2));
+        assertNotEquals(p1,p2);
     }
 
     /**
@@ -175,7 +175,7 @@ class PlacanjeTest {
     @Test
     void testEqualsNull() {
         placanje.setId(1L);
-        assertFalse(placanje.equals(null));
+        assertNotEquals(null,placanje);
     }
 
     /**
@@ -184,7 +184,7 @@ class PlacanjeTest {
     @Test
     void testEqualsDrugaKlasa() {
         placanje.setId(1L);
-        assertFalse(placanje.equals("tekst"));
+        assertNotEquals("tekst",placanje);
     }
 
     /**

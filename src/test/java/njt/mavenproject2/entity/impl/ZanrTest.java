@@ -111,7 +111,7 @@ class ZanrTest {
         Zanr z2 = new Zanr();
         z2.setId(1L);
 
-        assertTrue(z1.equals(z2));
+        assertEquals(z1,z2);
     }
 
     /**
@@ -125,7 +125,7 @@ class ZanrTest {
         Zanr z2 = new Zanr();
         z2.setId(2L);
 
-        assertFalse(z1.equals(z2));
+        assertNotEquals(z1,z2);
     }
 
     /**

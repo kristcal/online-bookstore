@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.time.Month;
 
 /**
  * Test klasa za proveru funkcionalnosti entiteta {@link Knjiga}.
@@ -63,7 +64,7 @@ class KnjigaTest {
     @Test
     void testKnjigaLongStringStringDoubleStringLocalDateStringZanr() {
         Zanr zanr = new Zanr(1L, "Roman");
-        LocalDate datum = LocalDate.of(2020, 1, 1);
+        LocalDate datum = LocalDate.of(2020, Month.JANUARY, 1);
 
         knjiga = new Knjiga(1L, "Na Drini cuprija", "Opis knjige", 1200.0,
                 "123456789", datum, "slika.jpg", zanr);
@@ -128,7 +129,7 @@ class KnjigaTest {
      */
     @Test
     void testSetGodinaIzdanja() {
-        LocalDate datum = LocalDate.of(2021, 5, 10);
+        LocalDate datum = LocalDate.of(2021, Month.MAY, 10);
         knjiga.setGodinaIzdanja(datum);
         assertEquals(datum, knjiga.getGodinaIzdanja());
     }
@@ -197,7 +198,7 @@ class KnjigaTest {
         Knjiga k2 = new Knjiga();
         k2.setId(1L);
 
-        assertTrue(k1.equals(k2));
+        assertEquals(k1,k2);
     }
 
     /**
@@ -211,7 +212,7 @@ class KnjigaTest {
         Knjiga k2 = new Knjiga();
         k2.setId(2L);
 
-        assertFalse(k1.equals(k2));
+        assertNotEquals(k1,k2);
     }
 
     /**
@@ -220,7 +221,7 @@ class KnjigaTest {
     @Test
     void testEqualsNull() {
         knjiga.setId(1L);
-        assertFalse(knjiga.equals(null));
+        assertNotEquals(null,knjiga);
     }
 
     /**
@@ -229,7 +230,7 @@ class KnjigaTest {
     @Test
     void testEqualsDrugaKlasa() {
         knjiga.setId(1L);
-        assertFalse(knjiga.equals("tekst"));
+        assertNotEquals("tekst",knjiga);
     }
 
     /**

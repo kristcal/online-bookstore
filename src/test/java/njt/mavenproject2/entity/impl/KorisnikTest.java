@@ -171,7 +171,7 @@ class KorisnikTest {
         Korisnik k2 = new Korisnik();
         k2.setId(1L);
 
-        assertTrue(k1.equals(k2));
+        assertEquals(k1, k2);
     }
 
     /**
@@ -185,7 +185,7 @@ class KorisnikTest {
         Korisnik k2 = new Korisnik();
         k2.setId(2L);
 
-        assertFalse(k1.equals(k2));
+        assertNotEquals(k1,k2);
     }
 
     /**
@@ -194,7 +194,7 @@ class KorisnikTest {
     @Test
     void testEqualsNull() {
         korisnik.setId(1L);
-        assertFalse(korisnik.equals(null));
+        assertNotEquals(null,korisnik);
     }
 
     /**
@@ -203,7 +203,7 @@ class KorisnikTest {
     @Test
     void testEqualsDrugaKlasa() {
         korisnik.setId(1L);
-        assertFalse(korisnik.equals("tekst"));
+        assertNotEquals("tekst",korisnik);
     }
 
     /**

@@ -156,7 +156,7 @@ class StavkaPorudzbineTest {
         StavkaPorudzbine s2 = new StavkaPorudzbine();
         s2.setId(1L);
 
-        assertTrue(s1.equals(s2));
+        assertEquals(s1,s2);
     }
 
     /**
@@ -170,7 +170,7 @@ class StavkaPorudzbineTest {
         StavkaPorudzbine s2 = new StavkaPorudzbine();
         s2.setId(2L);
 
-        assertFalse(s1.equals(s2));
+        assertNotEquals(s1,s2);
     }
 
     /**
@@ -181,7 +181,7 @@ class StavkaPorudzbineTest {
 
         StavkaPorudzbine s = new StavkaPorudzbine();
 
-        assertTrue(s.equals(s));
+        assertEquals(s, s);
     }
 
     /**
@@ -192,7 +192,7 @@ class StavkaPorudzbineTest {
 
         StavkaPorudzbine s = new StavkaPorudzbine();
 
-        assertFalse(s.equals("tekst"));
+        assertNotEquals("tekst", s);
     }
 
     /**
@@ -203,7 +203,7 @@ class StavkaPorudzbineTest {
 
         StavkaPorudzbine s = new StavkaPorudzbine();
 
-        assertFalse(s.equals(null));
+        assertNotEquals(null, s);
     }
 
     /**

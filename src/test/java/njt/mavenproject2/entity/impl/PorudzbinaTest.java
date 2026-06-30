@@ -149,7 +149,7 @@ class PorudzbinaTest {
         Porudzbina p2 = new Porudzbina();
         p2.setId(1L);
 
-        assertTrue(p1.equals(p2));
+        assertEquals(p1,p2);
     }
 
     /**
@@ -163,7 +163,7 @@ class PorudzbinaTest {
         Porudzbina p2 = new Porudzbina();
         p2.setId(2L);
 
-        assertFalse(p1.equals(p2));
+        assertNotEquals(p1,p2);
     }
 
     /**
@@ -291,7 +291,7 @@ class PorudzbinaTest {
         k.setId(1L);
 
         LocalDateTime datum =
-                LocalDateTime.of(2026, 6, 11, 18, 0);
+                LocalDateTime.of(2026, Month.JUNE, 11, 18, 0);
 
         Porudzbina p =
                 new Porudzbina(1L, datum, 2500.0, k);

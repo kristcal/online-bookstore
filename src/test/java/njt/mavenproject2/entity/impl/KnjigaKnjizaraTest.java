@@ -122,7 +122,7 @@ class KnjigaKnjizaraTest {
         KnjigaKnjizara kk2 = new KnjigaKnjizara();
         kk2.setId(1L);
 
-        assertTrue(kk1.equals(kk2));
+        assertEquals(kk1, kk2);
     }
 
     /**
@@ -136,7 +136,7 @@ class KnjigaKnjizaraTest {
         KnjigaKnjizara kk2 = new KnjigaKnjizara();
         kk2.setId(2L);
 
-        assertFalse(kk1.equals(kk2));
+        assertNotEquals(kk1, kk2);
     }
 
     /**
@@ -145,7 +145,7 @@ class KnjigaKnjizaraTest {
     @Test
     void testEqualsNull() {
         knjigaKnjizara.setId(1L);
-        assertFalse(knjigaKnjizara.equals(null));
+        assertNotEquals(null,knjigaKnjizara);
     }
 
     /**
@@ -154,7 +154,7 @@ class KnjigaKnjizaraTest {
     @Test
     void testEqualsDrugaKlasa() {
         knjigaKnjizara.setId(1L);
-        assertFalse(knjigaKnjizara.equals("tekst"));
+        assertNotEquals("tekst",knjigaKnjizara);
     }
 
     /**

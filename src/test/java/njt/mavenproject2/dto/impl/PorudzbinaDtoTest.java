@@ -3,6 +3,7 @@ package njt.mavenproject2.dto.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class PorudzbinaDtoTest {
     @Test
     void testSetDatum() {
         PorudzbinaDto dto = new PorudzbinaDto();
-        LocalDateTime datum = LocalDateTime.of(2026, 6, 12, 10, 0);
+        LocalDateTime datum = LocalDateTime.of(2026, Month.JUNE, 12, 10, 0);
 
         dto.setDatum(datum);
 

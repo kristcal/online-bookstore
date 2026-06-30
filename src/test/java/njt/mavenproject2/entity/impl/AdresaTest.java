@@ -154,7 +154,7 @@ class AdresaTest {
         Adresa a2 = new Adresa();
         a2.setId(1L);
 
-        assertTrue(a1.equals(a2));
+        assertEquals(a1, a2);
     }
 
     /**
@@ -168,7 +168,7 @@ class AdresaTest {
         Adresa a2 = new Adresa();
         a2.setId(2L);
 
-        assertFalse(a1.equals(a2));
+        assertNotEquals(a1, a2);
     }
 
     /**
@@ -177,7 +177,7 @@ class AdresaTest {
     @Test
     void testEqualsNull() {
         adresa.setId(1L);
-        assertFalse(adresa.equals(null));
+        assertNotEquals(null, adresa);
     }
 
     /**
@@ -186,7 +186,7 @@ class AdresaTest {
     @Test
     void testEqualsDrugaKlasa() {
         adresa.setId(1L);
-        assertFalse(adresa.equals("tekst"));
+        assertNotEquals("tekst", adresa);
     }
 
     /**

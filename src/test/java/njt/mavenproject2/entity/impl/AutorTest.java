@@ -122,7 +122,7 @@ class AutorTest {
         Autor a2 = new Autor();
         a2.setId(1L);
 
-        assertTrue(a1.equals(a2));
+        assertEquals(a1,a2);
     }
 
     /**
@@ -136,7 +136,7 @@ class AutorTest {
         Autor a2 = new Autor();
         a2.setId(2L);
 
-        assertFalse(a1.equals(a2));
+        assertNotEquals(a1,a2);
     }
 
     /**
@@ -145,7 +145,7 @@ class AutorTest {
     @Test
     void testEqualsNull() {
         autor.setId(1L);
-        assertFalse(autor.equals(null));
+        assertNotEquals(null,autor);
     }
 
     /**
@@ -154,7 +154,7 @@ class AutorTest {
     @Test
     void testEqualsDrugaKlasa() {
         autor.setId(1L);
-        assertFalse(autor.equals("tekst"));
+        assertNotEquals("tekst",autor);
     }
 
     /**
