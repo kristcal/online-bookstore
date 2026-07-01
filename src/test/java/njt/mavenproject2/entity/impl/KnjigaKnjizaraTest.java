@@ -145,7 +145,7 @@ class KnjigaKnjizaraTest {
     @Test
     void testEqualsNull() {
         knjigaKnjizara.setId(1L);
-        assertNotEquals(null,knjigaKnjizara);
+        assertFalse(knjigaKnjizara.equals(null));
     }
 
     /**
@@ -154,7 +154,19 @@ class KnjigaKnjizaraTest {
     @Test
     void testEqualsDrugaKlasa() {
         knjigaKnjizara.setId(1L);
-        assertNotEquals("tekst",knjigaKnjizara);
+        assertFalse(knjigaKnjizara.equals("tekst"));
+    }
+    
+    /**
+     * Proverava da dva objekta knjigaKnjizara sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        KnjigaKnjizara kk1 = new KnjigaKnjizara();
+        KnjigaKnjizara kk2 = new KnjigaKnjizara();
+
+        assertNotEquals(kk1, kk2);
     }
 
     /**

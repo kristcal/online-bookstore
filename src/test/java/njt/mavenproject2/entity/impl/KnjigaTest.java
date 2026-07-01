@@ -221,7 +221,7 @@ class KnjigaTest {
     @Test
     void testEqualsNull() {
         knjiga.setId(1L);
-        assertNotEquals(null,knjiga);
+        assertFalse(knjiga.equals(null));
     }
 
     /**
@@ -230,7 +230,18 @@ class KnjigaTest {
     @Test
     void testEqualsDrugaKlasa() {
         knjiga.setId(1L);
-        assertNotEquals("tekst",knjiga);
+        assertFalse(knjiga.equals("tekst"));
+    }
+    /**
+     * Proverava da dve knjige sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Knjiga k1 = new Knjiga();
+        Knjiga k2 = new Knjiga();
+
+        assertNotEquals(k1, k2);
     }
 
     /**

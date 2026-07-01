@@ -165,6 +165,51 @@ class PorudzbinaTest {
 
         assertNotEquals(p1,p2);
     }
+    
+    /**
+     * Proverava da je porudžbina jednaka samoj sebi.
+     */
+    @Test
+    void testEqualsSameObject() {
+
+        Porudzbina p = new Porudzbina();
+
+        assertEquals(p, p);
+    }
+
+    /**
+     * Proverava da porudžbina nije jednaka objektu druge klase.
+     */
+    @Test
+    void testEqualsDifferentClass() {
+
+        porudzbina.setId(1L);
+
+        assertFalse(porudzbina.equals("tekst"));
+    }
+
+    /**
+     * Proverava da porudžbina nije jednaka null vrednosti.
+     */
+    @Test
+    void testEqualsNull() {
+
+        porudzbina.setId(1L);
+
+        assertFalse(porudzbina.equals(null));
+    }
+    
+    /**
+     * Proverava da dve porudžbine sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Porudzbina p1 = new Porudzbina();
+        Porudzbina p2 = new Porudzbina();
+
+        assertNotEquals(p1, p2);
+    }
 
     /**
      * Proverava hashCode za porudžbine sa istim identifikatorom.

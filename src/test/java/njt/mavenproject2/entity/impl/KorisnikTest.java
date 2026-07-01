@@ -194,7 +194,7 @@ class KorisnikTest {
     @Test
     void testEqualsNull() {
         korisnik.setId(1L);
-        assertNotEquals(null,korisnik);
+        assertFalse(korisnik.equals(null));
     }
 
     /**
@@ -203,9 +203,20 @@ class KorisnikTest {
     @Test
     void testEqualsDrugaKlasa() {
         korisnik.setId(1L);
-        assertNotEquals("tekst",korisnik);
+        assertFalse(korisnik.equals("tekst"));
     }
 
+    /**
+     * Proverava da dva korisnika sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Korisnik k1 = new Korisnik();
+        Korisnik k2 = new Korisnik();
+
+        assertNotEquals(k1, k2);
+    }
     /**
      * Proverava hashCode za korisnike sa istim identifikatorom.
      */

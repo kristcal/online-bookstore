@@ -129,6 +129,40 @@ class ZanrTest {
     }
 
     /**
+     * Proverava da dva zanra sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Zanr a1 = new Zanr();
+        Zanr a2 = new Zanr();
+
+        assertNotEquals(a1, a2);
+    }
+    
+    /**
+     * Proverava da zanr nije jednak objektu druge klase.
+     */
+    @Test
+    void testEqualsDifferentClass() {
+
+        zanr.setId(1L);
+
+        assertFalse(zanr.equals("tekst"));
+    }
+
+    /**
+     * Proverava da zanr nije jednak null vrednosti.
+     */
+    @Test
+    void testEqualsNull() {
+
+        zanr.setId(1L);
+
+        assertFalse(zanr.equals(null));
+    }
+    
+    /**
      * Proverava hashCode za žanrove sa istim identifikatorom.
      */
     @Test

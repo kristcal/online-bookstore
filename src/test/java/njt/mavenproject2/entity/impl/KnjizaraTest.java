@@ -155,7 +155,7 @@ class KnjizaraTest {
     @Test
     void testEqualsNull() {
         knjizara.setId(1L);
-        assertNotEquals(null,knjizara);
+        assertFalse(knjizara.equals(null));
     }
 
     /**
@@ -164,7 +164,19 @@ class KnjizaraTest {
     @Test
     void testEqualsDrugaKlasa() {
         knjizara.setId(1L);
-        assertNotEquals("tekst",knjizara);
+        assertFalse(knjizara.equals("tekst"));
+    }
+    
+    /**
+     * Proverava da dve knjizare sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Knjizara k1 = new Knjizara();
+        Knjizara k2 = new Knjizara();
+
+        assertNotEquals(k1, k2);
     }
 
     /**

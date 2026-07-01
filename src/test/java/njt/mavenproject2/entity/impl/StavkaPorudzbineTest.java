@@ -190,9 +190,9 @@ class StavkaPorudzbineTest {
     @Test
     void testEqualsDifferentClass() {
 
-        StavkaPorudzbine s = new StavkaPorudzbine();
+        stavka.setId(1L);
 
-        assertNotEquals("tekst", s);
+        assertFalse(stavka.equals("tekst"));
     }
 
     /**
@@ -201,11 +201,22 @@ class StavkaPorudzbineTest {
     @Test
     void testEqualsNull() {
 
-        StavkaPorudzbine s = new StavkaPorudzbine();
+        stavka.setId(1L);
 
-        assertNotEquals(null, s);
+        assertFalse(stavka.equals(null));
     }
 
+    /**
+     * Proverava da dve stavke porudzbine sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        StavkaPorudzbine a1 = new StavkaPorudzbine();
+        StavkaPorudzbine a2 = new StavkaPorudzbine();
+
+        assertNotEquals(a1, a2);
+    }
     /**
      * Proverava hashCode za stavke porudžbine sa istim identifikatorom.
      */

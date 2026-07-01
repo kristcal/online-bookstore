@@ -177,7 +177,7 @@ class AdresaTest {
     @Test
     void testEqualsNull() {
         adresa.setId(1L);
-        assertNotEquals(null, adresa);
+        assertFalse(adresa.equals(null));
     }
 
     /**
@@ -186,9 +186,21 @@ class AdresaTest {
     @Test
     void testEqualsDrugaKlasa() {
         adresa.setId(1L);
-        assertNotEquals("tekst", adresa);
+        assertFalse(adresa.equals("tekst"));
     }
 
+    /**
+     * Proverava da dve adrese sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Adresa a1 = new Adresa();
+        Adresa a2 = new Adresa();
+
+        assertNotEquals(a1, a2);
+    }
+    
     /**
      * Proverava hashCode za adrese sa istim identifikatorom.
      */

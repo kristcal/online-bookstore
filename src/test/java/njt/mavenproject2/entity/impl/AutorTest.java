@@ -145,7 +145,7 @@ class AutorTest {
     @Test
     void testEqualsNull() {
         autor.setId(1L);
-        assertNotEquals(null,autor);
+        assertFalse(autor.equals(null));
     }
 
     /**
@@ -154,9 +154,21 @@ class AutorTest {
     @Test
     void testEqualsDrugaKlasa() {
         autor.setId(1L);
-        assertNotEquals("tekst",autor);
+        assertFalse(autor.equals("tekst"));
     }
 
+    /**
+     * Proverava da dva autora sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Autor a1 = new Autor();
+        Autor a2 = new Autor();
+
+        assertNotEquals(a1, a2);
+    }
+    
     /**
      * Proverava hashCode za autore sa istim identifikatorom.
      */

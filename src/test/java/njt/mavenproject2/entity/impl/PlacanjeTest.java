@@ -175,7 +175,7 @@ class PlacanjeTest {
     @Test
     void testEqualsNull() {
         placanje.setId(1L);
-        assertNotEquals(null,placanje);
+        assertFalse(placanje.equals(null));
     }
 
     /**
@@ -184,7 +184,19 @@ class PlacanjeTest {
     @Test
     void testEqualsDrugaKlasa() {
         placanje.setId(1L);
-        assertNotEquals("tekst",placanje);
+        assertFalse(placanje.equals("tekst"));
+    }
+    
+    /**
+     * Proverava da dva placanja sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        Placanje a1 = new Placanje();
+        Placanje a2 = new Placanje();
+
+        assertNotEquals(a1, a2);
     }
 
     /**

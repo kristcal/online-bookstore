@@ -138,7 +138,7 @@ class KnjigaAutorTest {
     void testEqualsNull() {
         knjigaAutor.setId(1L);
 
-        assertNotEquals(null,knjigaAutor);
+        assertFalse(knjigaAutor.equals(null));
     }
 
     /**
@@ -148,9 +148,20 @@ class KnjigaAutorTest {
     void testEqualsDrugaKlasa() {
         knjigaAutor.setId(1L);
 
-        assertNotEquals("tekst",knjigaAutor);
+        assertFalse(knjigaAutor.equals("tekst"));
     }
 
+    /**
+     * Proverava da dva objekta knjigaAutor sa null identifikatorom nisu jednake.
+     */
+    @Test
+    void testEqualsBothIdsNull() {
+
+        KnjigaAutor ka1 = new KnjigaAutor();
+        KnjigaAutor ka2 = new KnjigaAutor();
+
+        assertNotEquals(ka1, ka2);
+    }
     /**
      * Proverava hashCode za veze knjiga-autor sa istim identifikatorom.
      */
